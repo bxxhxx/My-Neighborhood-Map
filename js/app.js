@@ -1,5 +1,15 @@
-//Make preliminary list for first trial
+//Make preliminary list for first trial and added two more category items
 var modelList = [{
+    firstName: 'Muhammad',
+    lastName: 'Ali',
+    category: 'Live performance',
+    address: '6801 Hollywood Blvd.'
+}, {
+    firstName: 'Eddy',
+    lastName: 'Arnold',
+    category: 'Radio',
+    address: '6775 Hollywood Blvd.'
+}, {
     firstName: 'Jay',
     lastName: 'Leno',
     category: 'Television',
@@ -49,6 +59,8 @@ var Star = function(starItem) {
     this.lastName = ko.observable(starItem.lastName);
     this.category = ko.observable(starItem.category);
     this.address = ko.observable(starItem.address);
+    //starts the page with items hidden (unless a category is clicked)
+    this.show = ko.observable(false);
 
     //Computes a full name using KO
     this.fullName = ko.computed(function() {
@@ -71,6 +83,10 @@ var ViewModel = function() {
     });
     //Create a KO observable array
     this.walkOfFameList = ko.observableArray([]);
+
+    //Create a KO array with all main five categories
+    this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
+
 
     //Takes each object from data list and conversts into a Star object
     //using our Star prototype and pushes it into walkOfFame observable array
@@ -100,8 +116,17 @@ var ViewModel = function() {
                 }
             });
     };
-
-
+    //compares data from category click to each walkOfFameList item
+    // and shows ("true") matching items; hides ("false") un-matching items
+    this.categorySelector = function(data) {
+            for (i = 0; i < self.walkOfFameList().length; i++) {
+                if (data === self.walkOfFameList()[i].category()) {
+                    self.walkOfFameList()[i].show(true);
+                } else {
+                    self.walkOfFameList()[i].show(false);
+                }
+            }
+        }
 };
 
 

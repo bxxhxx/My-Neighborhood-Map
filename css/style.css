@@ -12,9 +12,16 @@ body {
 	float: left;
 }
 
-#list {
+#panel {
 	height: 100%;
 	width: 20%;
-	background-color: red;
 	float: left;
+}
+
+#category {
+	background-color: yellow;
+}
+
+#list {
+	background-color: red;
 }

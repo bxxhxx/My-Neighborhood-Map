@@ -13,13 +13,22 @@
 
 <body>
     <div id="map"></div>
-    <div id="list">
-    <!--Using KO data-bind to create dynamic list items-->
-    <ul data-bind="foreach: walkOfFameList">
-    <!--the text for each item would be the full name and once clicked
+    <div id="panel">
+        <div id="category">
+            <!--Using KO data-bind to create main categories-->
+            <ul data-bind="foreach: category">
+                <!--Creates clickable category list-->
+                <li data-bind="text: $data, click: $parent.categorySelector"></li>
+            </ul>
+        </div>
+        <div id="list">
+            <!--Using KO data-bind to create dynamic list items-->
+            <ul data-bind="foreach: walkOfFameList">
+                <!--the text for each item would be the full name and once clicked
     it would activate the markerMaker method-->
-    	<li data-bind="text: fullName, click: $parent.markerMaker"></li>
-    </ul>
+                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+            </ul>
+        </div>
     </div>
     <script src="js/app.js"></script>
 </body>
