@@ -19,7 +19,12 @@ body {
 }
 
 #category {
-	background-color: yellow;
+	background-color: black;
+	color: yellow;
+}
+
+.selected {
+	color: red;
 }
 
 #list {

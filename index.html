@@ -17,15 +17,16 @@
         <div id="category">
             <!--Using KO data-bind to create main categories-->
             <ul data-bind="foreach: category">
-                <!--Creates clickable category list-->
-                <li data-bind="text: $data, click: $parent.categorySelector"></li>
+                <!--Creates clickable category list. Also, use KO css binding to distinguish
+                the selected categories-->
+                <li data-bind="text: $data,  css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector"></li>
             </ul>
         </div>
         <div id="list">
             <!--Using KO data-bind to create dynamic list items-->
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
-    it would activate the markerMaker method-->
+                it would activate the markerMaker method-->
                 <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
             </ul>
         </div>
