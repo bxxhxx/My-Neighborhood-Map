@@ -32,7 +32,7 @@ var sortTheData = function(response) {
         for (var j = 0; j < newObjectSourceArray.length; j++) {
             //trim the white space around data strings
             newObjectSourceArray[j] = newObjectSourceArray[j].trim();
-            console.log(newObjectSourceArray[j]);
+            //console.log(newObjectSourceArray[j]);
         }
 
         //The following if/else if's directs the data into named properties

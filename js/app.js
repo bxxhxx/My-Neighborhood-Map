@@ -60,10 +60,41 @@ var ViewModel = function() {
                             map: self.map,
                             position: results[0].geometry.location
                         });
+                        //Three variables that will be used in windowContent
+                        var wikiLink = "";
+                        var fullName = walkOfFameListItem.fullName();
+                        var address = walkOfFameListItem.address();
+                        //ajax request to search fullName in wikipedia
+                        $.ajax({
+                            url: wikiUrl,
+                            data: {
+                                action: "opensearch",
+                                search: fullName,
+                                format: "json",
+                                limit: 1, //this parameter brings the first top item
+                                namespace: 0 //this namespace searches the title of the Wiki articles
+                            },
+                            dataType: "jsonp"
+                        }).done(function(response) {
+                            wikiLink = response[3][0];
+                            //Construct html for windowContent
+                            var windowContent = '<p>' + fullName + '</p>' +
+                                '<p>' + address + '</p>' +
+                                '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p>';
+                            //Make info window using google map API
+                            var infowindow = new google.maps.InfoWindow({
+                                content: windowContent
+                            });
+                            //adds an event listener on click
+                            marker.addListener('click', function() {
+                                infowindow.open(self.map, marker);
+                            });
+                        });
                     }
                 }
             });
     };
+
 
     //A new observable that captures whatever category is clicked and triggers
     //a visible style change
