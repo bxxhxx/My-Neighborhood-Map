@@ -32,7 +32,17 @@ var sortTheData = function(response) {
         for (var j = 0; j < newObjectSourceArray.length; j++) {
             //trim the white space around data strings
             newObjectSourceArray[j] = newObjectSourceArray[j].trim();
-            //console.log(newObjectSourceArray[j]);
+        }
+
+        //Using indexOf to locate and then remove duplicate description
+        var fullNameString = newObjectSourceArray[0];
+        var pipePosition = fullNameString.indexOf("|");
+        if (pipePosition > 0) {
+            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
+        }
+        pipePosition = fullNameString.indexOf("<");
+        if (pipePosition > 0) {
+            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
         }
 
         //The following if/else if's directs the data into named properties
