@@ -58,6 +58,7 @@ var ViewModel = function() {
                     if (results[0]) {
                         var marker = new google.maps.Marker({
                             map: self.map,
+                            animation: google.maps.Animation.DROP,
                             position: results[0].geometry.location
                         });
                         //Three variables that will be used in windowContent
@@ -80,14 +81,25 @@ var ViewModel = function() {
                             //Construct html for windowContent
                             var windowContent = '<p>' + fullName + '</p>' +
                                 '<p>' + address + '</p>' +
+                                //target blank opens the clicked page on a new tab
                                 '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p>';
                             //Make info window using google map API
                             var infowindow = new google.maps.InfoWindow({
                                 content: windowContent
                             });
-                            //adds an event listener on click
+                            //Make toggleBounce switch
+                            var toggleBounce = function() {
+                                if (marker.getAnimation() !== null) {
+                                    marker.setAnimation(null);
+                                } else {
+                                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                                }
+                            };
+                            //adds an event listener on click that opens info window and calls
+                            //toggle function
                             marker.addListener('click', function() {
                                 infowindow.open(self.map, marker);
+                                toggleBounce();
                             });
                         });
                     }
