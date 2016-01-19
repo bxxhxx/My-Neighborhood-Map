@@ -21,6 +21,13 @@ var ViewModel = function() {
     });
     //Create a KO observable array
     this.walkOfFameList = ko.observableArray([]);
+    //Create a KO observable that uses a data bind to search input box
+    this.query = ko.observable("");
+    //Prevents a page reload if one uses the submit on the search box
+    var searchForm = document.getElementById("searchForm");
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+    }, false);
 
     //Create a KO array with all main five categories
     this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
@@ -41,6 +48,25 @@ var ViewModel = function() {
             self.walkOfFameList.push(new Star(starObject));
         }
     });
+
+    //Make search window which compares the current search window value aka query to
+    //all the names in the list (using indexOf). If it finds it, it sets the show value to true,
+    //if not, sets it to false. It also clears the current category.
+    this.search = function(value) {
+        self.currentCategory("");
+        self.walkOfFameList().forEach(function(star) {
+            if (value == false) {
+                star.show(false);
+            } else if (star.fullName().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                star.show(true);
+            } else {
+                star.show(false);
+            }
+        });
+    };
+
+    //When query/searchBox changes, run the search function
+    self.query.subscribe(self.search);
 
     //Make a method that allows us to tap in to google's geo code API
     this.geocoder = new google.maps.Geocoder;
@@ -115,6 +141,10 @@ var ViewModel = function() {
     // and shows ("true") matching items; hides ("false") un-matching items
     this.categorySelector = function(data) {
         self.currentCategory(data);
+        //Clear searchBox when the category is clicked
+        var searchBox = document.getElementById("searchBox");
+        searchBox.value = "";
+        //Loop to show only the selected categories
         for (i = 0; i < self.walkOfFameList().length; i++) {
             if (data === self.walkOfFameList()[i].category()) {
                 self.walkOfFameList()[i].show(true);

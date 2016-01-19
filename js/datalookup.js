@@ -87,6 +87,8 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[8]);
             newObject.category.push(newObjectSourceArray[9]);
             newObject.address.push(newObjectSourceArray[10]);
+        } else {
+        console.log(newObjectSourceArray);
         }
 
         //Pushing the new newObject sorted above into the completeStarDataModel
