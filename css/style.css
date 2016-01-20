@@ -1,32 +1,142 @@
-
 html,
 body {
-	height: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: arial;
+}
+
+h3 {
+	text-align: center;
 	margin: 0;
-	padding: 0;
+	color: white;
+}
+
+h4 {
+	margin: 0;
+	font-size: 15px;
+	text-align: center;
+}
+
+#header {
+	height: 5%;
 }
 
 #map {
-	height: 100%;
-	width: 80%;
-	float: left;
+    height: 100%;
+    width: 100%;
+    float: left;
 }
 
 #panel {
-	height: 100%;
-	width: 20%;
-	float: left;
+    height: 100%;
+    width: 300px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    padding-right: 10px;
+}
+
+#searchBox {
+	width: 200px;
+	height: 30px;
+}
+
+#search-window {
+    height: 3%;
+    width: 200px;
+    margin-left: auto;
+	margin-right: auto;
+
+}
+
+#search-window-holder {
+	background-color: black;
+	border-radius: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 #category {
-	background-color: black;
-	color: yellow;
+    background-color: black;
+    color: yellow;
+    height: 15%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding-top: 10px;
 }
 
 .selected {
-	color: red;
+    color: red;
+    font-weight: bold;
 }
 
 #list {
-	background-color: red;
+    background-color: red;
+    overflow: scroll;
+    height: 72%;
+    border-radius: 10px;
+}
+
+li:hover {
+    font-weight: bold;
+}
+
+#category li:hover {
+    color: red;
+}
+
+ul {
+	list-style-type: none;
+}
+
+#list li {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+@media only screen and (max-width: 450px) {
+    h4 {
+        margin: 2px;
+    }
+
+	h2 {
+		margin: 5px 0px 5px;
+}
+
+    ul {
+    	margin: 0;
+    }
+
+    #panel {
+        height: 40%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    #search-window {
+        height: 25%;
+    }
+
+    #category {
+        height: 40%;
+
+    }
+
+    #list {
+        height: 35%;
+    }
+
+    #map {
+    	position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 60%;
+        width: 100%;
+        float: left;
+    }
 }

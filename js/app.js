@@ -21,6 +21,7 @@ var ViewModel = function() {
     });
     //Create a KO observable array
     this.walkOfFameList = ko.observableArray([]);
+
     //Create a KO observable that uses a data bind to search input box
     this.query = ko.observable("");
     //Prevents a page reload if one uses the submit on the search box
@@ -153,4 +154,23 @@ var ViewModel = function() {
             }
         }
     }
+
+    //Make computed observables that hides the list (the red box) if there is no
+    //search content or selected category
+    this.showListDiv = ko.computed(function() {
+        if (self.currentCategory() === "" && self.query() === "") {
+            /*
+            if ($(window).width() <= 450) {
+                var mapElement = document.getElementById("map");
+                mapElement.style.height = "65%";
+            };*/
+            return false;
+        } else {/*
+            if ($(window).width() <= 450) {
+                var mapElement = document.getElementById("map");
+                mapElement.style.height = "50%";
+            };*/
+            return true;
+        }
+    });
 };

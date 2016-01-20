@@ -14,24 +14,30 @@
 <body>
     <div id="map"></div>
     <div id="panel">
-        <div id="search-window">
-            <h2>Stars On The Hollywood Walk Of Fame</h2>
-            <form id="searchForm">
-                <!-- Make text-input window, binds input value to query KO observable, and
+        <div id="search-window-holder">
+            <div id="header">
+                <h3>Find Stars On The Hollywood Walk Of Fame</h3></div>
+            <div id="search-window">
+                <form id="searchForm">
+                    <!-- Make text-input window, binds input value to query KO observable, and
             it runs an update after every keyup stroke. This triggers a live search sorting through
             a search funcion in the viewModel-->
-                <input id="searchBox" type="search" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
-            </form>
+                    <input id="searchBox" type="search" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
+                </form>
+            </div>
         </div>
-        <h4>Click a Category for Full List of Names</h4>
         <div id="category">
+            <h4>Click a Category for Full List of Names</h4>
             <!--Using KO data-bind to create main categories-->
             <ul data-bind="foreach: category">
                 <!--Creates clickable category list. Also, use KO css binding to distinguish
                 the selected categories-->
-                <li data-bind="text: $data,  css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector"></li>
+                <li data-bind="css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector">★ <span data-bind="text: $data"></span></li>
             </ul>
         </div>
+        <!-- Making "containerless control flow syntax" to hide or show the list div
+        based on showListDiv computed observable-->
+        <!-- ko if: showListDiv -->
         <div id="list">
             <!--Using KO data-bind to create dynamic list items-->
             <ul data-bind="foreach: walkOfFameList">
@@ -40,6 +46,7 @@
                 <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
             </ul>
         </div>
+        <!-- /ko -->
     </div>
     <script src="js/datalookup.js"></script>
     <script src="js/app.js"></script>
