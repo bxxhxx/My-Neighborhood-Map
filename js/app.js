@@ -19,6 +19,17 @@ var ViewModel = function() {
         },
         zoom: 15
     });
+
+    //Set North West, South East bounderies for the map and attach them to the
+    //newly created map (helpful for mobil use)
+    var nwCorner = new google.maps.LatLng(34.1016067, -118.347);
+    var seCorner = new google.maps.LatLng(34.0978051, -118.3166061);
+    var bounds = new google.maps.LatLngBounds();
+    bounds.extend(nwCorner);
+    bounds.extend(seCorner);
+
+    self.map.fitBounds(bounds);
+
     //Create a KO observable array
     this.walkOfFameList = ko.observableArray([]);
 
@@ -65,6 +76,12 @@ var ViewModel = function() {
             }
         });
     };
+    //Enters clear string into KO observables currentCategory and query, triggering
+    //showListDiv to computed observable to hide the item/list
+    this.clearButton = function() {
+        self.currentCategory("");
+        self.query("");
+    }
 
     //When query/searchBox changes, run the search function
     self.query.subscribe(self.search);
@@ -83,10 +100,12 @@ var ViewModel = function() {
             function(results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[0]) {
+                        var starIcon = "image/smallstar.png";
                         var marker = new google.maps.Marker({
                             map: self.map,
                             animation: google.maps.Animation.DROP,
-                            position: results[0].geometry.location
+                            position: results[0].geometry.location,
+                            icon: starIcon
                         });
                         //Three variables that will be used in windowContent
                         var wikiLink = "";
@@ -106,10 +125,10 @@ var ViewModel = function() {
                         }).done(function(response) {
                             wikiLink = response[3][0];
                             //Construct html for windowContent
-                            var windowContent = '<p>' + fullName + '</p>' +
+                            var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
                                 '<p>' + address + '</p>' +
                                 //target blank opens the clicked page on a new tab
-                                '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p>';
+                                '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
                             //Make info window using google map API
                             var infowindow = new google.maps.InfoWindow({
                                 content: windowContent
@@ -134,7 +153,6 @@ var ViewModel = function() {
             });
     };
 
-
     //A new observable that captures whatever category is clicked and triggers
     //a visible style change
     this.currentCategory = ko.observable("");
@@ -155,21 +173,12 @@ var ViewModel = function() {
         }
     }
 
-    //Make computed observables that hides the list (the red box) if there is no
+    //Make computed observables that hides the list if there is no
     //search content or selected category
     this.showListDiv = ko.computed(function() {
         if (self.currentCategory() === "" && self.query() === "") {
-            /*
-            if ($(window).width() <= 450) {
-                var mapElement = document.getElementById("map");
-                mapElement.style.height = "65%";
-            };*/
             return false;
-        } else {/*
-            if ($(window).width() <= 450) {
-                var mapElement = document.getElementById("map");
-                mapElement.style.height = "50%";
-            };*/
+        } else {
             return true;
         }
     });

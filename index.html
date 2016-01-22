@@ -12,18 +12,18 @@
 </head>
 
 <body>
-    <div id="map"></div>
     <div id="panel">
-        <div id="search-window-holder">
+        <div id="topSection">
             <div id="header">
                 <h3>Find Stars On The Hollywood Walk Of Fame</h3></div>
             <div id="search-window">
-                <form id="searchForm">
+                <div id="searchForm">
                     <!-- Make text-input window, binds input value to query KO observable, and
-            it runs an update after every keyup stroke. This triggers a live search sorting through
-            a search funcion in the viewModel-->
-                    <input id="searchBox" type="search" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
-                </form>
+                    it runs an update after every keyup stroke. This triggers a live search sorting through a search funcion in the viewModel-->
+                    <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
+                    <!--Make Ko data-bind to click even to clear searachBox and current category-->
+                    <button id="clearButton" data-bind="click: clearButton">Clear</button>
+                </div>
             </div>
         </div>
         <div id="category">
@@ -39,6 +39,7 @@
         based on showListDiv computed observable-->
         <!-- ko if: showListDiv -->
         <div id="list">
+            <h4>Your Current List</h4>
             <!--Using KO data-bind to create dynamic list items-->
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
@@ -47,7 +48,15 @@
             </ul>
         </div>
         <!-- /ko -->
+        <!--Make windows always visible in sub 450 devices-->
+        <div id="list-mobile">
+            <h4>Your Current List</h4>
+            <ul data-bind="foreach: walkOfFameList">
+                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+            </ul>
+        </div>
     </div>
+    <div id="map"></div>
     <script src="js/datalookup.js"></script>
     <script src="js/app.js"></script>
 </body>
