@@ -20,7 +20,7 @@
                 <div id="searchForm">
                     <!-- Make text-input window, binds input value to query KO observable, and
                     it runs an update after every keyup stroke. This triggers a live search sorting through a search funcion in the viewModel-->
-                    <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
+                    <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'afterkeydown'" autocomplete="off" />
                     <!--Make Ko data-bind to click even to clear searachBox and current category-->
                     <button id="clearButton" data-bind="click: clearButton">Clear</button>
                 </div>
@@ -44,7 +44,7 @@
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
                 it would activate the markerMaker method-->
-                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+                <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
             </ul>
         </div>
         <!-- /ko -->
@@ -52,7 +52,7 @@
         <div id="list-mobile">
             <h4>Your Current List</h4>
             <ul data-bind="foreach: walkOfFameList">
-                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+                <li data-bind="text: fullName, visible: show, click: $parent.infoActivate"></li>
             </ul>
         </div>
     </div>

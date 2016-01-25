@@ -1,4 +1,11 @@
-//Using Wikipedia API to collect the Walk of Fame Star data
+map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 34.101630,
+            lng: -118.326684
+        },
+        zoom: 15
+    });
+    //Using Wikipedia API to collect the Walk of Fame Star data
 var wikiUrl = "https://en.wikipedia.org/w/api.php";
 //Make an array to store a complete list
 var completeStarDataModel = [];

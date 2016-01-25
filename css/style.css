@@ -76,7 +76,7 @@
     #list {
         background-color: #F7DE50;
         overflow: scroll;
-        height: 72%;
+        height: 0;
         border-radius: 10px;
     }
 
@@ -85,7 +85,7 @@
     }
 
     #category li:hover {
-        color: #FFADD9;
+        color: ##F7DE50;
     }
 
     ul {
@@ -116,6 +116,7 @@
         #map {
             height: 100%;
         }
+
         #list-mobile {
             display: none;
         }
