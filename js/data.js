@@ -1,6 +1,6 @@
 //Make data set that includes all the info needed for each star to be located on the map
 //This data was brought in via datalookup.js
-var completeStarDataModel = [{
+var completeStarDataModel = [/*{
     "fullName": "Bud Abbott",
     "category": ["Radio", "Motion pictures", "Television"],
     "address": ["6333 Hollywood Blvd.", "1611 Vine Street", "6740 Hollywood Blvd."],
@@ -318,13 +318,13 @@ var completeStarDataModel = [{
     "address": ["6652 Hollywood Blvd."],
     "lat": [34.1013663],
     "lng": [-118.3352527]
-}, {
+}, */{
     "fullName": "Louis Armstrong",
     "category": ["Recording"],
     "address": ["7018 Hollywood Blvd."],
     "lat": [34.101285],
     "lng": [-118.3421778]
-}, {
+}/*, {
     "fullName": "Neil Armstrong",
     "category": ["Television"],
     "address": ["Hollywood & Vine"],
@@ -13164,4 +13164,4 @@ var completeStarDataModel = [{
     "address": ["6629 Hollywood Blvd."],
     "lat": [34.101596],
     "lng": [-118.3345009]
-}]
+}*/]

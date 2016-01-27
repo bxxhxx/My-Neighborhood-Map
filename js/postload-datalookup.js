@@ -3,17 +3,10 @@ GOOGLE MAP GEO API AND TO FILTER DATA AND ARRANGE IT TO USESFUL OBJECTS AND ARRA
 
 
 //Make the first map with specific parameters using google map API
-//Make the first map with specific parameters using google map API
-map = new google.maps.Map(document.getElementById('map'), {
-    center: {
-        lat: 34.101630,
-        lng: -118.326684
-    },
-    zoom: 15
-});
+
 
 //Make an array to store a complete list
-var completeStarDataModel = [];
+//var completeStarDataModel = [];
 
 function isEmpty(obj) {
     for (var prop in obj) {
@@ -63,16 +56,16 @@ var sortTheData = function(response) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
             newObject.address = [newObjectSourceArray[2]];
-            //newObject.lat = [];
-            //newObject.lng = [];
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 5) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
             newObject.address = [newObjectSourceArray[2]];
             newObject.category.push(newObjectSourceArray[3]);
             newObject.address.push(newObjectSourceArray[4]);
-            //newObject.lat = [];
-            //newObject.lng = [];
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 7) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -81,8 +74,8 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[4]);
             newObject.category.push(newObjectSourceArray[5]);
             newObject.address.push(newObjectSourceArray[6]);
-            //newObject.lat = [];
-            //newObject.lng = [];
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 9) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -93,8 +86,8 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[6]);
             newObject.category.push(newObjectSourceArray[7]);
             newObject.address.push(newObjectSourceArray[8]);
-            //newObject.lat = [];
-            //newObject.lng = [];
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 11) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -107,23 +100,58 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[8]);
             newObject.category.push(newObjectSourceArray[9]);
             newObject.address.push(newObjectSourceArray[10]);
-            //newObject.lat = [];
-            //newObject.lng = [];
+            newObject.lat = [];
+            newObject.lng = [];
         }
-
-
-
-
-        //Pushing the new newObject sorted above into the completeStarDataModel
 
         if (isEmpty(newObject) === false) {
-            completeStarDataModel.push(newObject);
-            //console.log(newObject);
-        }
+            var starName = newObject.fullName;
+            for (var i = 0; i < newObject.category.length; i++) {
+                var starCategory = newObject.category[i];
+                var starAddress = newObject.address[i];
+                //var starlat = newObject.lat[i];
+                //var starlng = starItem.lng[i];
+                var starObject = {
+                    fullName: starName,
+                    category: starCategory,
+                    address: starAddress,
+                    //lat: starlat,
+                    //lng: starlng
+                };
+                self.walkOfFameList.push(new self.Star(starObject));
+                //console.log(newObject);
+            }
 
+        }
     }
+
 };
-//THIS CODE IS NOT GOING TO BE USED - GEOCODING WILL BE DONE IN APP.JS FOR EACH MARKER
+        /*
+        completeStarDataModel.forEach(function(starItem) {
+            var starName = starItem.fullName;
+            for (var i = 0; i < starItem.category.length; i++) {
+                var starCategory = starItem.category[i];
+                var starAddress = starItem.address[i];
+                var starlat = starItem.lat[i];
+                var starlng = starItem.lng[i];
+                var starObject = {
+                    fullName: starName,
+                    category: starCategory,
+                    address: starAddress,
+                    //lat: starlat,
+                    //lng: starlng
+                };
+                self.walkOfFameList.push(new self.Star(starObject));
+                //console.log("item complete: " + starName);
+            }
+        }); */
+
+
+        //Pushing the new newObject sorted above into the completeStarDataModel && newObject.fullName !== "Louis Armstrong"
+
+
+
+
 var geocodeCounter = 0;
 var geoCodeAll = function() {
 
@@ -170,10 +198,12 @@ var geoCodeAll = function() {
     geocodeObject();
 };
 
+
 //This is ajax request with specific parameters requested by Wikipedia's API in
 //order to get the full information from the walk of fame list page
+/*
 $.ajax({
-    url: "https://en.wikipedia.org/w/api.php",
+    url: wikiUrl,
     data: {
         action: "query",
         prop: "revisions",
@@ -192,6 +222,6 @@ $.ajax({
     //geoCodeAll();
 
     //Activates KO on ViewModel
-    ko.applyBindings(new ViewModel());
+    //ko.applyBindings(new ViewModel());
 
-});
+}); */

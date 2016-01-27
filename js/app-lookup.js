@@ -294,24 +294,29 @@ var ViewModel = function() {
     var listElem = document.getElementById("list");
     listElem.style.height = "72%";
     //console.log("4 loading Marilyn");
-    self.query("Marilyn Monroe");
+    self.query("Louis Armstrong");
 
 
 
 };
-
+//Make the first map with specific parameters using google map API
+map = new google.maps.Map(document.getElementById('map'), {
+    center: {
+        lat: 34.101630,
+        lng: -118.326684
+    },
+    zoom: 15
+});
 
 //Start the viewModel
-//ko.applyBindings(new ViewModel());
-
-//THIS CODE TURNED OFF BECAUSE WE ARE FRONT LOADING OUR WIKIP LOOKUP THRU datalookup.js
+ko.applyBindings(new ViewModel());
 
 //Next sequence is used to build a more robust data set from WikiPedia
 
 //A function to test for empty objects created during the data sift (used in pushObjects)
 
-/*
-var isEmpty = function(obj) {
+
+isEmpty = function(obj) {
     for (var prop in obj) {
         if (obj.hasOwnProperty(prop))
             return false;
@@ -321,7 +326,7 @@ var isEmpty = function(obj) {
 }
 
 //This function sorts the data coming from Wikipedia (ajax request)
-var sortTheData = function(response) {
+sortTheData = function(response) {
     //Using split to divide up the raw data from wikipedia in to info strings
     var rawDataArray = response.split("| [[");
     //var clean1DataArray = []; <-- looks extraneous
@@ -473,4 +478,4 @@ $.ajax({
     //Activates KO on ViewModel
     //ko.applyBindings(new ViewModel());
 
-}); */
+});
