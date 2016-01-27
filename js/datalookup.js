@@ -1,12 +1,10 @@
-map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-            lat: 34.101630,
-            lng: -118.326684
-        },
-        zoom: 15
-    });
-    //Using Wikipedia API to collect the Walk of Fame Star data
-var wikiUrl = "https://en.wikipedia.org/w/api.php";
+/*THIS PAGE WAS ORIGINALY USED TO BRING IN OVER 2400 NAMES DIRECTLY FROM WIKIPEDIA USING
+GOOGLE MAP GEO API AND TO FILTER DATA AND ARRANGE IT TO USESFUL OBJECTS AND ARRAYS.
+
+
+//Make the first map with specific parameters using google map API
+
+
 //Make an array to store a complete list
 var completeStarDataModel = [];
 
@@ -58,12 +56,16 @@ var sortTheData = function(response) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
             newObject.address = [newObjectSourceArray[2]];
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 5) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
             newObject.address = [newObjectSourceArray[2]];
             newObject.category.push(newObjectSourceArray[3]);
             newObject.address.push(newObjectSourceArray[4]);
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 7) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -72,6 +74,8 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[4]);
             newObject.category.push(newObjectSourceArray[5]);
             newObject.address.push(newObjectSourceArray[6]);
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 9) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -82,6 +86,8 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[6]);
             newObject.category.push(newObjectSourceArray[7]);
             newObject.address.push(newObjectSourceArray[8]);
+            newObject.lat = [];
+            newObject.lng = [];
         } else if (newObjectSourceArray.length === 11) {
             newObject.fullName = newObjectSourceArray[0];
             newObject.category = [newObjectSourceArray[1]];
@@ -94,16 +100,67 @@ var sortTheData = function(response) {
             newObject.address.push(newObjectSourceArray[8]);
             newObject.category.push(newObjectSourceArray[9]);
             newObject.address.push(newObjectSourceArray[10]);
-        } else {
-        console.log(newObjectSourceArray);
+            newObject.lat = [];
+            newObject.lng = [];
         }
 
+
+
+
         //Pushing the new newObject sorted above into the completeStarDataModel
+
         if (isEmpty(newObject) === false) {
             completeStarDataModel.push(newObject);
             //console.log(newObject);
         }
+
     }
+};
+
+var geocodeCounter = 0;
+var geoCodeAll = function() {
+
+    var currentObject = completeStarDataModel[geocodeCounter];
+    var currentAddressLength = currentObject.address.length;
+    var currentAddressNumber = 0;
+
+    var geocodeObject = function() {
+
+        var searchURL = "https://maps.googleapis.com/maps/api/geocode/"
+        var addressString = currentObject.address[currentAddressNumber] + ",+Los+Angeles,+CA";
+        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
+                null,
+                function(data, status) {
+                    //console.log("worked");
+                    //console.log(geocodeCounter);
+                    if (data.status == "OK") {
+                        ///console.log(data);
+                        var p = data.results[0].geometry.location;
+                        //console.log(p.lat);
+                        //console.log(p.lng);
+                        currentObject.lat.push(p.lat);
+                        currentObject.lng.push(p.lng);
+                    } else {
+                        currentObject.lat.push(99);
+                        currentObject.lng.push(99);
+                    }
+                    currentAddressNumber++
+
+                })
+            .done(function() {
+                if (currentAddressNumber < currentAddressLength) {
+                    geocodeObject();
+                } else if (geocodeCounter < 2400) {
+                    geocodeCounter++
+                    geoCodeAll();
+                } else {
+                    var completeStarDataModeltoString = JSON.stringify(completeStarDataModel);
+                    //console.log(completeStarDataModeltoString);
+                    document.body.appendChild(document.createElement("p")).innerHTML = completeStarDataModeltoString;
+                }
+            });
+    };
+    geocodeObject();
 };
 
 //This is ajax request with specific parameters requested by Wikipedia's API in
@@ -121,8 +178,13 @@ $.ajax({
 }).done(function(response) {
     //Puts the response json into a variable and then runs a sorting function
     var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
-    //console.log(wikiItems);
+    console.log("1 Wiki returns full list");
     sortTheData(wikiItems);
+    console.log("2 All Wiki data sorted");
+
+    geoCodeAll();
+
     //Activates KO on ViewModel
-    ko.applyBindings(new ViewModel());
-});
+    //ko.applyBindings(new ViewModel());
+
+});*/
