@@ -4,12 +4,22 @@ GOOGLE MAP GEO API AND TO FILTER DATA AND ARRANGE IT TO USESFUL OBJECTS AND ARRA
 
 //Make the first map with specific parameters using google map API
 //Make the first map with specific parameters using google map API
+
+
+
 map = new google.maps.Map(document.getElementById('map'), {
     center: {
         lat: 34.101630,
         lng: -118.326684
     },
     zoom: 15
+});
+
+//show the map has loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+    // do something only the first time the map is loaded
+    console.log("map idle");
+
 });
 
 //Make an array to store a complete list
@@ -185,13 +195,15 @@ $.ajax({
 }).done(function(response) {
     //Puts the response json into a variable and then runs a sorting function
     var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
-    //console.log("1 Wiki returns full list");
+    console.log("1 Wiki returns full list" + new Date());
     sortTheData(wikiItems);
-    //console.log("2 All Wiki data sorted");
+    console.log("2 All Wiki data sorted" + new Date());
 
     //geoCodeAll();
 
-    //Activates KO on ViewModel
     ko.applyBindings(new ViewModel());
+
+    //Activates KO on ViewModel
+
 
 });

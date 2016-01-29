@@ -3,36 +3,24 @@ var ViewModel = function() {
     //Make a hook to grab the context in the lower level scope
     var self = this;
 
+
+
     //Make Star prototype with the following specific parameters
     this.Star = function(starObject) {
         this.fullName = ko.observable(starObject.fullName);
         this.category = ko.observable(starObject.category);
         this.address = starObject.address;
         //This star has been chosen either through search or category selection
-        this.chosen = ko.observable(false);
-        //The order number in the list from the serach or category selecton
-        this.order = ko.observable(0);
+        this.chosen = false;
+        //The order number in the list from the serach or category selecton; (-1 means not included)
+        this.order = -1;
         //Hold the context of the star item
         var starSelf = this;
-        //Computes if an item should be shown on the list based on other KO observables
-        this.show = ko.computed(function() {
-            //If a star is chosen and is within the 20 position of the range start, it
-            //will show true
-            if ((starSelf.chosen() === true) && (starSelf.order() >= self.rangeStart()) &&
-                (starSelf.order() < (self.rangeStart() + 20))) {
-                return true;
-                //self.starSetter()
-            } else {
-                //Otherwise it will not show
-                return false;
-            }
-        });
-        this.marker = new google.maps.Marker({
-            map: null,
-            animation: google.maps.Animation.DROP,
-            position: null,
-            icon: "image/smallstar.png"
-        });
+        //Ko obeservable that determines whether it shows on the list or not
+        //Which is carculated by whether or not an item is in display range and in chosen result
+        this.show = ko.observable(false);
+        //A placekeeper for attaching the map marker
+        this.marker = null;
     };
 
     //Create a KO observable array
@@ -71,128 +59,147 @@ var ViewModel = function() {
 
     //Create a KO array with all main five categories
     this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
+
     //range refers to start position in the chosen item group
-    this.rangeStart = ko.observable(0);
+    this.rangeStart = 0;
 
     //Takes each object (starItem) from the completeStarDataModel and creates one or more
     //star objects based on how many categories the named star has. Then each of these new
-    //star objects are pushed into walkOfFameList.
-
+    //star objects are pushed into walkOfFameList, a KO obeservable array.
     completeStarDataModel.forEach(function(starItem) {
         var starName = starItem.fullName;
         for (var i = 0; i < starItem.category.length; i++) {
             var starCategory = starItem.category[i];
             var starAddress = starItem.address[i];
-            //var starlat = starItem.lat[i];
-            //var starlng = starItem.lng[i];
             var starObject = {
                 fullName: starName,
                 category: starCategory,
                 address: starAddress,
-                //lat: starlat,
-                //lng: starlng
             };
             self.walkOfFameList.push(new self.Star(starObject));
-            //console.log("item complete: " + starName);
         }
     });
 
-    //Make search window which compares the current search window value aka query to
-    //all the names in the list (using indexOf). If it finds it, it sets the chosen value to true,
-    //if not, sets it to false. Then it checks to see if the chosen item is in the show selection.
-    //If so, it places a star in teh map via star setter function.
+    //A function that determines whether a star's order number is within the current range.
+    //And if so, sets it show value to true and puts a marker on the map.
+    this.showRangeEvaluator = function(star) {
+        if ((star.order >= self.rangeStart) &&
+            (star.order < (self.rangeStart + 20))) {
+            star.show(true);
+            self.starSetter(star);
+        } else {
+            //Otherwise it will not show, and any existing marker will be cleared.
+            self.starClear(star);
+        }
+    };
+
+    //A function that removes a marker from the map and insures no name is shows on the current list
+    this.starClear = function(star) {
+
+        if (star.marker !== null) {
+            star.marker.setMap(null);
+        };
+        star.show(false);
+    };
+
+    //A search function with specific parameters that goes through the walk of fame list and decides
+    //whether an item matches the search value/query. If it does, it gives it an order number and sets
+    //chosen to true and sends it to showRangeEvaluater to decide whether it's in the show range.
     this.search = function(value) {
         self.currentCategory("");
         self.newOrder = 0;
         self.topOrder = 0;
+        self.rangeStart = 0;
         self.walkOfFameList().forEach(function(star) {
-            if (value == false) {
-                star.chosen(false);
-                star.marker.setMap(null);
+            if (value === false || value === null) {
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             } else if (star.fullName().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                star.chosen(true);
-                star.order(self.newOrder);
+                star.chosen = true;
+                star.order = self.newOrder;
                 self.topOrder = self.newOrder;
-                if (star.show() === true) {
-                    self.starSetter(star);
-                }
+                self.showRangeEvaluator(star);
                 self.newOrder++;
             } else {
                 //sets unmatched stars to unchosen and removes their stars from the map
-                star.chosen(false);
-                star.marker.setMap(null);
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             }
         });
     };
-    //Enters clear string into KO observables currentCategory and query, triggering
-    //showListDiv to computed observable to hide the item/list
+
+    //A function that clears "empty" string into KO observables currentCategory and query,
+    //and it zeros out certain properties.
     this.clearButton = function() {
         self.currentCategory("");
-        self.query("");
-        self.rangeStart(0);
+        self.query(null);
+        self.rangeStart = 0;
         self.newOrder = 0;
         self.topOrder = 0;
         //empties all stars from the map
-        for (var i = 0; i < self.walkOfFameList().length; i++) {
-            if (self.walkOfFameList()[i].marker.map !== null) {
-                self.walkOfFameList()[i].marker.setMap(null);
-            }
-        };
+        self.walkOfFameList().forEach(function(star) {
+            self.starClear(star);
+        });
     };
 
     //When query/searchBox changes, run the search function
     self.query.subscribe(self.search);
 
-    //Looks up latlng for a star, feeds that position to the marker, and adds it to the map.
+    //A function that makes the marker, attaches it to a star object. It looks up latlng for a marker,
+    //and feeds that position to the marker, and adds it to the map.
     //Also makes the marker clickable with the chooseStar function.
     this.starSetter = function(walkOfFameListItem) {
+        //checks to see if marker has previously been made; if "null", makes marker, geocodes, and places on map
+        if (walkOfFameListItem.marker === null) {
 
-        var searchURL = "https://maps.googleapis.com/maps/api/geocode/"
-        var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
-        var pos;
-        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
-            null,
-            function(data, status) {
-                //console.log("worked");
-                //console.log(geocodeCounter);
-                if (data.status == "OK") {
-                    //console.log(data);
-                    pos = data.results[0].geometry.location;
-                    //console.log(pos);
-                    //console.log(p.lat);
-                    //console.log(p.lng);
-                    walkOfFameListItem.marker.setPosition(pos);
-                    walkOfFameListItem.marker.setMap(map);
-                } else {
-                    console.log(status);
-                }
+            walkOfFameListItem.marker = new google.maps.Marker({
+                map: map,
+                animation: google.maps.Animation.DROP,
+                position: null,
+                icon: "image/smallstar.png"
+            })
 
+            var searchURL = "https://maps.googleapis.com/maps/api/geocode/";
+            var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
+            var pos;
+            $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
+                null,
+                function(data, status) {
+                    if (data.status == "OK") {
 
-            });
-        /*.done(function() {
-            if (currentAddressNumber < currentAddressLength) {
-                geocodeObject();
-            } else if (geocodeCounter < 2400) {
-                geocodeCounter++
-                geoCodeAll();
-            } else {
-                var completeStarDataModeltoString = JSON.stringify(completeStarDataModel);
-                //console.log(completeStarDataModeltoString);
-                document.body.appendChild(document.createElement("p")).innerHTML = completeStarDataModeltoString;
-            }
-        })*/
+                        pos = data.results[0].geometry.location;
+                        walkOfFameListItem.marker.setPosition(pos);
 
+                        walkOfFameListItem.marker.addListener('click', function() {
+                            self.chooseStar(walkOfFameListItem)
+                        });
+                        //makes sure item is still "show" when the marker geocode returns
+                        if (walkOfFameListItem.show() === true) {
+                            walkOfFameListItem.marker.setMap(map);
+                        }
 
+                    } else {
+                        console.log(status);
+                    }
+                });
+        } else {
+            //used when a marker has previously been made, geocoded, and removed from map; puts it back on map
+            walkOfFameListItem.marker.setMap(map);
+
+        }
     };
 
+    //A function that looks to see if there is already a currentStar, stop the bounce.
+    //Then make the clicked item the currentStar, then runs the info activate to open
+    //the info window on the current star
     this.chooseStar = function(walkOfFameListItem) {
-        //If there is already a currentStar, stop the bounce. Then make the clicked item
-        //the currentStar
         if (self.currentStar()) {
             self.currentStar().marker.setAnimation(null);
-        };
+        }
         self.currentStar(walkOfFameListItem);
-        //Then open the info window
+        //Then opens the info window
         self.infoActivate(self.currentStar());
     };
 
@@ -243,234 +250,49 @@ var ViewModel = function() {
     this.categorySelector = function(data) {
         self.clearButton();
         self.currentCategory(data);
-
-        for (var i = 0, len = self.walkOfFameList().length; i < len; i++) {
-            if (data === self.walkOfFameList()[i].category()) {
-                self.walkOfFameList()[i].chosen(true);
-                self.walkOfFameList()[i].order(self.newOrder);
+        self.walkOfFameList().forEach(function(star) {
+            if (data === star.category()) {
+                star.chosen = true;
+                star.order = self.newOrder;
                 self.topOrder = self.newOrder;
-                if (self.walkOfFameList()[i].show() === true) {
-                    self.starSetter(self.walkOfFameList()[i]);
-                }
+                self.showRangeEvaluator(star);
                 self.newOrder++;
             } else {
-                self.walkOfFameList()[i].chosen(false);
-                self.walkOfFameList()[i].order(-1); //makes sure order below any show sift
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             }
-        }
+        });
     };
 
     //It adds 20 to range start position and updates the list advancing through the
-    //next 20 names.
+    //next 20 names using range evaluator.
+    //(Checks to see if list is advanced past top of list. If so, it doesn't change the rangeStart)
     this.nextRange = function() {
-        var rangeStart = self.rangeStart();
-        rangeStart = rangeStart + 20;
-        if (rangeStart < self.topOrder) {
-            self.rangeStart(rangeStart);
-        }
-        for (var i = 0, len = self.walkOfFameList().length; i < len; i++) {
-            if (self.walkOfFameList()[i].show() === true) {
-                self.starSetter(self.walkOfFameList()[i]);
-            }
+        var updateRange = self.rangeStart + 20;
+
+        if (updateRange < self.topOrder) {
+            self.rangeStart = updateRange;
+            self.walkOfFameList().forEach(function(star) {
+                self.showRangeEvaluator(star);
+            });
         }
     };
 
-    //It goes back to the previous range position
+    //It goes back to the previous range position.
+    //Checks to see if range has been reduced below zero position; if so, doesn't change rangeStart
     this.previousRange = function() {
-        var rangeStart = self.rangeStart();
-        rangeStart = rangeStart - 20;
-        if (rangeStart < 0) {
-            rangeStart = 0;
-        }
-        self.rangeStart(rangeStart);
-        for (var i = 0, len = self.walkOfFameList().length; i < len; i++) {
-            if (self.walkOfFameList()[i].show() === true) {
-                self.starSetter(self.walkOfFameList()[i]);
-            }
+        var updateRange = self.rangeStart - 20;
+
+        if (updateRange >= 0) {
+            self.rangeStart = updateRange;
+            self.walkOfFameList().forEach(function(star) {
+                self.showRangeEvaluator(star);
+            });
         }
     };
 
-    //unhides the list once all prior javascript is loaded
-    var listElem = document.getElementById("list");
-    listElem.style.height = "72%";
-    //console.log("4 loading Marilyn");
-    self.query("Marilyn Monroe");
-
-
+    //Launch query to demo the app on first load.
+    self.query("Charlie Chaplin");
 
 };
-
-
-//Start the viewModel
-//ko.applyBindings(new ViewModel());
-
-//THIS CODE TURNED OFF BECAUSE WE ARE FRONT LOADING OUR WIKIP LOOKUP THRU datalookup.js
-
-//Next sequence is used to build a more robust data set from WikiPedia
-
-//A function to test for empty objects created during the data sift (used in pushObjects)
-
-/*
-var isEmpty = function(obj) {
-    for (var prop in obj) {
-        if (obj.hasOwnProperty(prop))
-            return false;
-    }
-    return true;
-
-}
-
-//This function sorts the data coming from Wikipedia (ajax request)
-var sortTheData = function(response) {
-    //Using split to divide up the raw data from wikipedia in to info strings
-    var rawDataArray = response.split("| [[");
-    //var clean1DataArray = []; <-- looks extraneous
-
-    console.log("sort start");
-
-    //This "for loop" will restructure each data string into a more coherent data object
-    //It will skip item [0] which was header information
-    for (var i = 1; i < rawDataArray.length; i++) {
-        var newObject = {};
-
-        //Using replace function to get rid off extraenous characters
-        rawDataArray[i] = rawDataArray[i].replace("]]", "");
-        rawDataArray[i] = rawDataArray[i].replace(/\n\|-\n/g, "||");
-        rawDataArray[i] = rawDataArray[i].replace(/\|\|\|/g, "||");
-        //Splits different category of information based on the double pipe
-        var newObjectSourceArray = rawDataArray[i].split("||");
-
-        //gets rid of last extraneous item in the newObjectSourceArray
-        newObjectSourceArray.pop();
-
-        //This "for loop" trims the white space around data strings
-        for (var j = 0; j < newObjectSourceArray.length; j++) {
-            newObjectSourceArray[j] = newObjectSourceArray[j].trim();
-        }
-
-        //Using indexOf to locate and then remove duplicate description
-        var fullNameString = newObjectSourceArray[0];
-        var pipePosition = fullNameString.indexOf("|");
-        if (pipePosition > 0) {
-            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
-        }
-
-        pipePosition = fullNameString.indexOf("<");
-        if (pipePosition > 0) {
-            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
-        }
-
-        //The following function ues "if/else if's" to direct the data into named properties
-        //on the empty newObject
-        var sortArrays = function(newObjectSourceArray, newObject) {
-
-            if (newObjectSourceArray.length === 3) {
-                newObject.fullName = newObjectSourceArray[0];
-                newObject.category = [newObjectSourceArray[1]];
-                newObject.address = [newObjectSourceArray[2]];
-                newObject.lat = [];
-                newObject.lng = [];
-            } else if (newObjectSourceArray.length === 5) {
-                newObject.fullName = newObjectSourceArray[0];
-                newObject.category = [newObjectSourceArray[1]];
-                newObject.address = [newObjectSourceArray[2]];
-                newObject.category.push(newObjectSourceArray[3]);
-                newObject.address.push(newObjectSourceArray[4]);
-                newObject.lat = [];
-                newObject.lng = [];
-            } else if (newObjectSourceArray.length === 7) {
-                newObject.fullName = newObjectSourceArray[0];
-                newObject.category = [newObjectSourceArray[1]];
-                newObject.address = [newObjectSourceArray[2]];
-                newObject.category.push(newObjectSourceArray[3]);
-                newObject.address.push(newObjectSourceArray[4]);
-                newObject.category.push(newObjectSourceArray[5]);
-                newObject.address.push(newObjectSourceArray[6]);
-                newObject.lat = [];
-                newObject.lng = [];
-            } else if (newObjectSourceArray.length === 9) {
-                newObject.fullName = newObjectSourceArray[0];
-                newObject.category = [newObjectSourceArray[1]];
-                newObject.address = [newObjectSourceArray[2]];
-                newObject.category.push(newObjectSourceArray[3]);
-                newObject.address.push(newObjectSourceArray[4]);
-                newObject.category.push(newObjectSourceArray[5]);
-                newObject.address.push(newObjectSourceArray[6]);
-                newObject.category.push(newObjectSourceArray[7]);
-                newObject.address.push(newObjectSourceArray[8]);
-                newObject.lat = [];
-                newObject.lng = [];
-            } else if (newObjectSourceArray.length === 11) {
-                newObject.fullName = newObjectSourceArray[0];
-                newObject.category = [newObjectSourceArray[1]];
-                newObject.address = [newObjectSourceArray[2]];
-                newObject.category.push(newObjectSourceArray[3]);
-                newObject.address.push(newObjectSourceArray[4]);
-                newObject.category.push(newObjectSourceArray[5]);
-                newObject.address.push(newObjectSourceArray[6]);
-                newObject.category.push(newObjectSourceArray[7]);
-                newObject.address.push(newObjectSourceArray[8]);
-                newObject.category.push(newObjectSourceArray[9]);
-                newObject.address.push(newObjectSourceArray[10]);
-                newObject.lat = [];
-                newObject.lng = [];
-            }
-        };
-
-        sortArrays(newObjectSourceArray, newObject);
-        console.log("finished sort");
-        //This function checks to see if newObject has more than one star Address/Category,
-        // thenformats new objects from these, then uses Star prototyper, then pushes individual items
-        //into walkOfFameList
-        var pushObjects = function(newObject) {
-            if (isEmpty(newObject) === false) {
-                var starName = newObject.fullName;
-                console.log("name in pushObjects: " + starName);
-                for (var i = 0; i < newObject.category.length; i++) {
-                    var starCategory = newObject.category[i];
-                    var starAddress = newObject.address[i];
-                    //var starlat = newObject.lat[i];
-                    //var starlng = starItem.lng[i];
-                    var starObject = {
-                        fullName: starName,
-                        category: starCategory,
-                        address: starAddress,
-                        //lat: starlat,
-                        //lng: starlng
-                    };
-                    ViewModel.walkOfFameList.push(new ViewModel.Star(starObject));
-                    //console.log(newObject);
-                }
-            }
-        };
-
-        pushObjects(newObject);
-        console.log("finished push");
-    }
-};
-
-console.log("ajax starting");
-
-$.ajax({
-    url: "https://en.wikipedia.org/w/api.php",
-    data: {
-        action: "query",
-        prop: "revisions",
-        format: "json",
-        rvprop: "content",
-        pageids: "1310953"
-    },
-    dataType: "jsonp"
-}).done(function(response) {
-    //Puts the response json into a variable and then runs a sorting function
-    var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
-    console.log("1 Wiki returns full list");
-    //sortTheData(wikiItems);
-    console.log("sort finish");
-
-    //geoCodeAll();
-
-    //Activates KO on ViewModel
-    //ko.applyBindings(new ViewModel());
-
-}); */
