@@ -1,43 +1,45 @@
-//Make Star prototype with three specific parameters
-var Star = function(starObject) {
-    this.fullName = ko.observable(starObject.fullName);
-    this.category = ko.observable(starObject.category);
-    this.address = ko.observable(starObject.address);
-
-    this.chosen = ko.observable(false);
-    this.order = ko.observable(0);
-
-    var starSelf = this;
-    //starts the page with items hidden (unless a category is clicked)
-    this.show = ko.computed(function() {
-        if ((starSelf.chosen() === true) && (starSelf.order() >= 0) &&
-            (starSelf.order() < 39)) {
-            return true;
-        } else {
-            return false;
-        }
-    });
-    this.marker = new google.maps.Marker({
-        map: null,
-        animation: google.maps.Animation.DROP,
-        position: null,
-        icon: "image/smallstar.png"
-    });
-};
-
 //Create knockout ViewModel function
 var ViewModel = function() {
     //Make a hook to grab the context in the lower level scope
     var self = this;
-    //Make the first map with specific parameters using google map API
-    this.map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-            lat: 34.101630,
-            lng: -118.326684
-        },
-        zoom: 15
-    });
 
+
+
+    //Make Star prototype with the following specific parameters
+    this.Star = function(starObject) {
+        this.fullName = ko.observable(starObject.fullName);
+        this.category = ko.observable(starObject.category);
+        this.address = starObject.address;
+        //This star has been chosen either through search or category selection
+        this.chosen = false;
+        //The order number in the list from the serach or category selecton; (-1 means not included)
+        this.order = -1;
+        //Hold the context of the star item
+        var starSelf = this;
+        //Ko obeservable that determines whether it shows on the list or not
+        //Which is carculated by whether or not an item is in display range and in chosen result
+        this.show = ko.observable(false);
+        //A placekeeper for attaching the map marker
+        this.marker = null;
+    };
+
+    //Create a KO observable array
+    this.walkOfFameList = ko.observableArray([]);
+
+    //Create a KO observable that uses a data bind to search input box
+    this.query = ko.observable("");
+
+    //A new observable that captures whatever category is clicked and triggers
+    //a visible style change
+    this.currentCategory = ko.observable("");
+    //It recieves the clicked star from the list
+    this.currentStar = ko.observable(null);
+    //reference point for ordering each search list
+    this.newOrder = 0;
+    //highest value in current order
+    this.topOrder = 0;
+
+    this.infowindow = new google.maps.InfoWindow();
 
     //Set North West, South East bounderies for the map and attach them to the
     //newly created map (helpful for mobil use)
@@ -47,13 +49,8 @@ var ViewModel = function() {
     bounds.extend(nwCorner);
     bounds.extend(seCorner);
 
-    self.map.fitBounds(bounds);
+    map.fitBounds(bounds);
 
-    //Create a KO observable array
-    this.walkOfFameList = ko.observableArray([]);
-
-    //Create a KO observable that uses a data bind to search input box
-    this.query = ko.observable("");
     //Prevents a page reload if one uses the submit on the search box
     var searchForm = document.getElementById("searchForm");
     searchForm.addEventListener('submit', function(e) {
@@ -63,11 +60,12 @@ var ViewModel = function() {
     //Create a KO array with all main five categories
     this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
 
-    this.range = 0;
+    //range refers to start position in the chosen item group
+    this.rangeStart = 0;
 
     //Takes each object (starItem) from the completeStarDataModel and creates one or more
-    //star object based on how many categories the named star has. Then each of these new
-    //star objects are pushed into walkOfFameList.
+    //star objects based on how many categories the named star has. Then each of these new
+    //star objects are pushed into walkOfFameList, a KO obeservable array.
     completeStarDataModel.forEach(function(starItem) {
         var starName = starItem.fullName;
         for (var i = 0; i < starItem.category.length; i++) {
@@ -76,208 +74,225 @@ var ViewModel = function() {
             var starObject = {
                 fullName: starName,
                 category: starCategory,
-                address: starAddress
+                address: starAddress,
             };
-            self.walkOfFameList.push(new Star(starObject));
+            self.walkOfFameList.push(new self.Star(starObject));
         }
     });
 
-    //Make search window which compares the current search window value aka query to
-    //all the names in the list (using indexOf). If it finds it, it sets the show value to true,
-    //if not, sets it to false. It also clears the current category.
+    //A function that determines whether a star's order number is within the current range.
+    //And if so, sets it show value to true and puts a marker on the map.
+    this.showRangeEvaluator = function(star) {
+        if ((star.order >= self.rangeStart) &&
+            (star.order < (self.rangeStart + 20))) {
+            star.show(true);
+            self.starSetter(star);
+        } else {
+            //Otherwise it will not show, and any existing marker will be cleared.
+            self.starClear(star);
+        }
+    };
+
+    //A function that removes a marker from the map and insures no name is shows on the current list
+    this.starClear = function(star) {
+
+        if (star.marker !== null) {
+            star.marker.setMap(null);
+        };
+        star.show(false);
+    };
+
+    //A search function with specific parameters that goes through the walk of fame list and decides
+    //whether an item matches the search value/query. If it does, it gives it an order number and sets
+    //chosen to true and sends it to showRangeEvaluater to decide whether it's in the show range.
     this.search = function(value) {
         self.currentCategory("");
+        self.newOrder = 0;
+        self.topOrder = 0;
+        self.rangeStart = 0;
         self.walkOfFameList().forEach(function(star) {
-            if (value == false) {
-                star.chosen(false);
+            if (value === false || value === null) {
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             } else if (star.fullName().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                star.chosen(true);
+                star.chosen = true;
+                star.order = self.newOrder;
+                self.topOrder = self.newOrder;
+                self.showRangeEvaluator(star);
+                self.newOrder++;
             } else {
-                star.chosen(false);
+                //sets unmatched stars to unchosen and removes their stars from the map
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             }
         });
     };
-    //Enters clear string into KO observables currentCategory and query, triggering
-    //showListDiv to computed observable to hide the item/list
+
+    //A function that clears "empty" string into KO observables currentCategory and query,
+    //and it zeros out certain properties.
     this.clearButton = function() {
         self.currentCategory("");
-        self.query("");
-        for (var i = 0; i < self.walkOfFameList().length; i++) {
-            self.walkOfFameList()[i].marker.setMap(null);
-            console.log('tried to set markers to null');
-        };
+        self.query(null);
+        self.rangeStart = 0;
+        self.newOrder = 0;
+        self.topOrder = 0;
+        //empties all stars from the map
+        self.walkOfFameList().forEach(function(star) {
+            self.starClear(star);
+        });
     };
 
     //When query/searchBox changes, run the search function
     self.query.subscribe(self.search);
 
-    //Make a method that allows us to tap in to google's geo code API
-    this.geocoder = new google.maps.Geocoder();
+    //A function that makes the marker, attaches it to a star object. It looks up latlng for a marker,
+    //and feeds that position to the marker, and adds it to the map.
+    //Also makes the marker clickable with the chooseStar function.
+    this.starSetter = function(walkOfFameListItem) {
+        //checks to see if marker has previously been made; if "null", makes marker, geocodes, and places on map
+        if (walkOfFameListItem.marker === null) {
 
-    //Makes a marker for any given item on the list
-    this.markerMaker = function(walkOfFameListItem) {
+            walkOfFameListItem.marker = new google.maps.Marker({
+                map: map,
+                animation: google.maps.Animation.DROP,
+                position: null,
+                icon: "image/smallstar.png"
+            })
 
-        $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?address=' + walkOfFameListItem.address() + ",Los Angeles&sensor=false",
-            null,
-            function(data) {
-                console.log("results are back from google");
-                var p = data.results[0].geometry.location
-                    //var latlng = new google.maps.LatLng(p.lat, p.lng);
-                    //var starIcon = "image/smallstar.png";
-                    /* walkOfFameListItem.marker = new google.maps.Marker({
-                        map: self.map,
-                        animation: google.maps.Animation.DROP,
-                        position: p,
-                        icon: starIcon
-                    });*/
-                walkOfFameListItem.marker.setPosition(p);
-                walkOfFameListItem.marker.setMap(self.map);
-                //Three variables that will be used in windowContent
-                var wikiLink = "";
-                var fullName = walkOfFameListItem.fullName();
-                var address = walkOfFameListItem.address();
-                //ajax request to search fullName in wikipedia
-                $.ajax({
-                    url: wikiUrl,
-                    data: {
-                        action: "opensearch",
-                        search: fullName,
-                        format: "json",
-                        limit: 1, //this parameter brings the first top item
-                        namespace: 0 //this namespace searches the title of the Wiki articles
-                    },
-                    dataType: "jsonp"
-                }).done(function(response) {
-                    console.log("wiki link return");
-                    wikiLink = response[3][0];
-                    //Construct html for windowContent
-                    var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
-                        '<p>' + address + '</p>' +
-                        //target blank opens the clicked page on a new tab
-                        '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
-                    //Make info window using google map API
-                    var infowindow = new google.maps.InfoWindow({
-                        content: windowContent
-                    });
-                    //Make toggleBounce switch
-                    var toggleBounce = function() {
-                        if (walkOfFameListItem.marker.getAnimation() !== null) {
-                            walkOfFameListItem.marker.setAnimation(null);
-                        } else {
-                            walkOfFameListItem.marker.setAnimation(google.maps.Animation.BOUNCE);
+            var searchURL = "https://maps.googleapis.com/maps/api/geocode/";
+            var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
+            var pos;
+            $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
+                null,
+                function(data, status) {
+                    if (data.status == "OK") {
+
+                        pos = data.results[0].geometry.location;
+                        walkOfFameListItem.marker.setPosition(pos);
+
+                        walkOfFameListItem.marker.addListener('click', function() {
+                            self.chooseStar(walkOfFameListItem)
+                        });
+                        //makes sure item is still "show" when the marker geocode returns
+                        if (walkOfFameListItem.show() === true) {
+                            walkOfFameListItem.marker.setMap(map);
                         }
-                    };
-                    //adds an event listener on click that opens info window and calls
-                    //toggle function
-                    walkOfFameListItem.marker.addListener('click', function() {
-                        infowindow.open(self.map, walkOfFameListItem.marker);
-                        toggleBounce();
-                    });
+
+                    } else {
+                        console.log(status);
+                    }
                 });
-            });
-        //using geocoder API
-        /*self.geocoder.geocode({
-            address: walkOfFameListItem.address() + ", Los Angeles, CA, USA"
-        },
-        //Call back function that creates the marker based on the result
-        //of the geocode lookup
-        function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                console.log("geocode complete");
-                if (results[0]) {
-                    var starIcon = "image/smallstar.png";
-                    var marker = new google.maps.Marker({
-                        map: self.map,
-                        animation: google.maps.Animation.DROP,
-                        position: results[0].geometry.location,
-                        icon: starIcon
-                    });
-                    //Three variables that will be used in windowContent
-                    var wikiLink = "";
-                    var fullName = walkOfFameListItem.fullName();
-                    var address = walkOfFameListItem.address();
-                    //ajax request to search fullName in wikipedia
-                    $.ajax({
-                        url: wikiUrl,
-                        data: {
-                            action: "opensearch",
-                            search: fullName,
-                            format: "json",
-                            limit: 1, //this parameter brings the first top item
-                            namespace: 0 //this namespace searches the title of the Wiki articles
-                        },
-                        dataType: "jsonp"
-                    }).done(function(response) {
-                        console.log("wiki link return");
-                        wikiLink = response[3][0];
-                        //Construct html for windowContent
-                        var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
-                            '<p>' + address + '</p>' +
-                            //target blank opens the clicked page on a new tab
-                            '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
-                        //Make info window using google map API
-                        var infowindow = new google.maps.InfoWindow({
-                            content: windowContent
-                        });
-                        //Make toggleBounce switch
-                        var toggleBounce = function() {
-                            if (marker.getAnimation() !== null) {
-                                marker.setAnimation(null);
-                            } else {
-                                marker.setAnimation(google.maps.Animation.BOUNCE);
-                            }
-                        };
-                        //adds an event listener on click that opens info window and calls
-                        //toggle function
-                        marker.addListener('click', function() {
-                            infowindow.open(self.map, marker);
-                            toggleBounce();
-                        });
-                    });
-                }
-            } else {
-                console.log("problem: " + status);
-            }
-        });*/
+        } else {
+            //used when a marker has previously been made, geocoded, and removed from map; puts it back on map
+            walkOfFameListItem.marker.setMap(map);
+
+        }
     };
 
-    //A new observable that captures whatever category is clicked and triggers
-    //a visible style change
-    this.currentCategory = ko.observable("");
-    //compares data from category click to each walkOfFameList item
-    // and shows ("true") matching items; hides ("false") un-matching items
+    //A function that looks to see if there is already a currentStar, stop the bounce.
+    //Then make the clicked item the currentStar, then runs the info activate to open
+    //the info window on the current star
+    this.chooseStar = function(walkOfFameListItem) {
+        if (self.currentStar()) {
+            self.currentStar().marker.setAnimation(null);
+        }
+        self.currentStar(walkOfFameListItem);
+        //Then opens the info window
+        self.infoActivate(self.currentStar());
+    };
+
+    //Switches between the state of bouncing and not bouncing
+    this.toggleBounce = function(walkOfFameListItem) {
+        if (walkOfFameListItem.marker.getAnimation() !== null) {
+            walkOfFameListItem.marker.setAnimation(null);
+        } else {
+            walkOfFameListItem.marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    };
+
+    //Reconstructs the info window for a new marker
+    this.infoActivate = function(walkOfFameListItem) {
+        var wikiLink = "";
+        //Using Wikipedia API to collect the Walk of Fame Star data
+        var wikiUrl = "https://en.wikipedia.org/w/api.php";
+        var fullName = walkOfFameListItem.fullName();
+        var address = walkOfFameListItem.address;
+        //ajax request to search fullName in wikipedia
+        $.ajax({
+            url: wikiUrl,
+            data: {
+                action: "opensearch",
+                search: fullName,
+                format: "json",
+                limit: 1, //this parameter brings the first top item
+                namespace: 0 //this namespace searches the title of the Wiki articles
+            },
+            dataType: "jsonp"
+        }).done(function(response) {
+            wikiLink = response[3][0];
+            //Construct html for windowContent
+            var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
+                '<p>' + address + '</p>' +
+                //target blank opens the clicked page on a new tab
+                '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
+            //Inject the content to info window
+            self.infowindow.setContent(windowContent);
+            //Opens the info window on the chosen item
+            self.infowindow.open(map, walkOfFameListItem.marker);
+            self.toggleBounce(walkOfFameListItem);
+        });
+    };
+
+    //Once a category is selected, it clears the searchbox and other counters.
+    //Then it loops through all items, setting any matching items to chosen.
     this.categorySelector = function(data) {
         self.clearButton();
         self.currentCategory(data);
-        //Clear searchBox when the category is clicked
-        var searchBox = document.getElementById("searchBox");
-        searchBox.value = "";
-        //Loop to show only the selected categories
-        var newOrder = 0;
-        for (i = 0; i < self.walkOfFameList().length; i++) {
-            if (data === self.walkOfFameList()[i].category()) {
-                self.walkOfFameList()[i].chosen(true);
-                self.walkOfFameList()[i].order(newOrder);
-
-                if (self.walkOfFameList()[i].show() === true) {
-                    self.markerMaker(self.walkOfFameList()[i]);
-                    console.log("show is true");
-                }
-                newOrder++;
-
+        self.walkOfFameList().forEach(function(star) {
+            if (data === star.category()) {
+                star.chosen = true;
+                star.order = self.newOrder;
+                self.topOrder = self.newOrder;
+                self.showRangeEvaluator(star);
+                self.newOrder++;
             } else {
-                self.walkOfFameList()[i].chosen(false);
+                star.order = -1;
+                star.chosen = false;
+                self.starClear(star);
             }
+        });
+    };
+
+    //It adds 20 to range start position and updates the list advancing through the
+    //next 20 names using range evaluator.
+    //(Checks to see if list is advanced past top of list. If so, it doesn't change the rangeStart)
+    this.nextRange = function() {
+        var updateRange = self.rangeStart + 20;
+
+        if (updateRange < self.topOrder) {
+            self.rangeStart = updateRange;
+            self.walkOfFameList().forEach(function(star) {
+                self.showRangeEvaluator(star);
+            });
         }
     };
 
-    //Make computed observables that hides the list if there is no
-    //search content or selected category
-    this.showListDiv = ko.computed(function() {
-        if (self.currentCategory() === "" && self.query() === "") {
-            return false;
-        } else {
-            return true;
+    //It goes back to the previous range position.
+    //Checks to see if range has been reduced below zero position; if so, doesn't change rangeStart
+    this.previousRange = function() {
+        var updateRange = self.rangeStart - 20;
+
+        if (updateRange >= 0) {
+            self.rangeStart = updateRange;
+            self.walkOfFameList().forEach(function(star) {
+                self.showRangeEvaluator(star);
+            });
         }
-    });
+    };
+
+    //Launch query to demo the app on first load.
+    self.query("Charlie Chaplin");
+
 };

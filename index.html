@@ -7,10 +7,7 @@
     <title>My N-Hood Map</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_Rbe4lbe9Thsl4jdovR-J3qtWIi7yK4"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-</head>
-
+    </head>
 <body>
     <div id="panel">
         <div id="topSection">
@@ -20,7 +17,7 @@
                 <div id="searchForm">
                     <!-- Make text-input window, binds input value to query KO observable, and
                     it runs an update after every keyup stroke. This triggers a live search sorting through a search funcion in the viewModel-->
-                    <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" />
+                    <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'afterkeydown'" autocomplete="off" />
                     <!--Make Ko data-bind to click even to clear searachBox and current category-->
                     <button id="clearButton" data-bind="click: clearButton">Clear</button>
                 </div>
@@ -37,28 +34,32 @@
         </div>
         <!-- Making "containerless control flow syntax" to hide or show the list div
         based on showListDiv computed observable-->
-        <!-- ko if: showListDiv -->
+        <!-- k if: showListDiv -->
         <div id="list">
-            <h4>Your Current List</h4>
+            <h4><button id="previous" data-bind="click: previousRange">Previous</button>Your Current List<button id="next" data-bind="click: nextRange">Next</button></h4>
             <!--Using KO data-bind to create dynamic list items-->
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
                 it would activate the markerMaker method-->
-                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+                <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
             </ul>
         </div>
-        <!-- /ko -->
+        <!-- /o -->
         <!--Make windows always visible in sub 450 devices-->
         <div id="list-mobile">
             <h4>Your Current List</h4>
             <ul data-bind="foreach: walkOfFameList">
-                <li data-bind="text: fullName, visible: show, click: $parent.markerMaker"></li>
+                <li data-bind="text: fullName, visible: show, click: $parent.infoActivate"></li>
             </ul>
         </div>
     </div>
     <div id="map"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+    <!-- <script src="js/data.js"></script> -->
     <script src="js/datalookup.js"></script>
     <script src="js/app.js"></script>
+
 </body>
 
 </html>
