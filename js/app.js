@@ -40,16 +40,19 @@ var ViewModel = function() {
     this.topOrder = 0;
 
     this.infowindow = new google.maps.InfoWindow();
-
     //Set North West, South East bounderies for the map and attach them to the
     //newly created map (helpful for mobil use)
+    /*
     var nwCorner = new google.maps.LatLng(34.1016067, -118.347);
     var seCorner = new google.maps.LatLng(34.0978051, -118.3166061);
     var bounds = new google.maps.LatLngBounds();
     bounds.extend(nwCorner);
     bounds.extend(seCorner);
 
-    map.fitBounds(bounds);
+    map.fitBounds(bounds);*/
+
+
+
 
     //Prevents a page reload if one uses the submit on the search box
     var searchForm = document.getElementById("searchForm");
@@ -91,6 +94,7 @@ var ViewModel = function() {
             //Otherwise it will not show, and any existing marker will be cleared.
             self.starClear(star);
         }
+
     };
 
     //A function that removes a marker from the map and insures no name is shows on the current list
@@ -151,6 +155,15 @@ var ViewModel = function() {
     //and feeds that position to the marker, and adds it to the map.
     //Also makes the marker clickable with the chooseStar function.
     this.starSetter = function(walkOfFameListItem) {
+        var iconSize;
+        //measures the current size of the screen window
+        var windowWidth = window.innerWidth;
+        //And based on the width, it decides between the mobil or regular size
+        if (windowWidth < 701) {
+            iconSize = "image/mobilstar.png";
+        } else {
+            iconSize = "image/smallstar.png";
+        }
         //checks to see if marker has previously been made; if "null", makes marker, geocodes, and places on map
         if (walkOfFameListItem.marker === null) {
 
@@ -158,7 +171,7 @@ var ViewModel = function() {
                 map: map,
                 animation: google.maps.Animation.DROP,
                 position: null,
-                icon: "image/smallstar.png"
+                icon: iconSize
             })
 
             var searchURL = "https://maps.googleapis.com/maps/api/geocode/";
@@ -291,7 +304,6 @@ var ViewModel = function() {
             });
         }
     };
-
     //Launch query to demo the app on first load.
     self.query("Charlie Chaplin");
 

@@ -7,7 +7,8 @@
     <title>My N-Hood Map</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_Rbe4lbe9Thsl4jdovR-J3qtWIi7yK4"></script>
-    </head>
+</head>
+
 <body>
     <div id="panel">
         <div id="topSection">
@@ -32,26 +33,26 @@
                 <li data-bind="css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector">★ <span data-bind="text: $data"></span></li>
             </ul>
         </div>
-        <!-- Making "containerless control flow syntax" to hide or show the list div
-        based on showListDiv computed observable-->
-        <!-- k if: showListDiv -->
         <div id="list">
-            <h4><button id="previous" data-bind="click: previousRange">Previous</button>Your Current List<button id="next" data-bind="click: nextRange">Next</button></h4>
+            <div>
+                <h4><button id="previous" data-bind="click: previousRange">Previous</button>Your Current List<button id="next" data-bind="click: nextRange">Next</button></h4>
+            </div>
             <!--Using KO data-bind to create dynamic list items-->
-            <ul data-bind="foreach: walkOfFameList">
-                <!--the text for each item would be the full name and once clicked
+            <div id="listItems">
+                <ul data-bind="foreach: walkOfFameList">
+                    <!--the text for each item would be the full name and once clicked
                 it would activate the markerMaker method-->
-                <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
-            </ul>
+                    <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
+                </ul>
+            </div>
         </div>
-        <!-- /o -->
-        <!--Make windows always visible in sub 450 devices-->
+        <!--Make windows always visible in sub 450 devices
         <div id="list-mobile">
             <h4>Your Current List</h4>
             <ul data-bind="foreach: walkOfFameList">
                 <li data-bind="text: fullName, visible: show, click: $parent.infoActivate"></li>
             </ul>
-        </div>
+        </div>-->
     </div>
     <div id="map"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -59,7 +60,6 @@
     <!-- <script src="js/data.js"></script> -->
     <script src="js/datalookup.js"></script>
     <script src="js/app.js"></script>
-
 </body>
 
 </html>

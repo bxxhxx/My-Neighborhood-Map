@@ -1,199 +1,215 @@
-    html,
-    body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: arial;
-        color: #F7DE50;
-    }
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: arial;
+    color: #F7DE50;
+}
 
-    h3 {
-        text-align: center;
-        margin: 0;
-    }
+h3 {
+    text-align: center;
+    margin: 0;
+}
 
-    h4 {
-        margin: 0;
-        font-size: 15px;
-        text-align: center;
-    }
+h4 {
+    margin: 0;
+    font-size: 15px;
+    text-align: center;
+}
 
-    #header {
-        height: 5%;
-    }
+#header {
+    height: 5%;
+}
 
-    #map {
-        width: 100%;
-        float: left;
-    }
+#map {
+    width: 100%;
+    float: left;
+}
 
-    #panel {
-        height: 100%;
-        width: 300px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: transparent;
-        padding-right: 10px;
-        z-index: 1;
-    }
+#panel {
+    height: 100%;
+    width: 300px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    padding-right: 10px;
+    z-index: 1;
+}
 
-    #searchForm {
-        width: 100%;
-        text-align: center;
-    }
+#searchForm {
+    width: 100%;
+    text-align: center;
+}
 
-    #searchBox {
-        width: 120px;
-        height: 20px;
-        display: inline-block;
-    }
+#searchBox {
+    width: 120px;
+    height: 20px;
+    display: inline-block;
+}
 
-    #clearButton {
-        display: inline-block;
-    }
+#clearButton {
+    display: inline-block;
+}
 
-    #search-window {
-        height: 3%;
-        width: 200px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+#search-window {
+    height: 3%;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
+#topSection {
+    background-color: #3B3A33;
+}
+
+#category {
+    background-color: #3B3A33;
+}
+
+.selected {
+    color: #FFADD9;
+    font-weight: bold;
+}
+
+#list {
+    background-color: #F7DE50;
+    height: 72%;
+    border-radius: 10px;
+}
+
+li:hover {
+    font-weight: bold;
+}
+
+#category li:hover {
+    color: ##F7DE50;
+}
+
+ul {
+    list-style-type: none;
+}
+
+#list li {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    color: #3B3A33;
+}
+
+#list h4 {
+    color: #3B3A33;
+}
+
+.infoWindow {
+    color: #3B3A33;
+}
+
+
+/*Make adjustments for screens larget than 450*/
+
+@media only screen and (min-width: 701px) {
     #topSection {
-        background-color: #3B3A33;
+        border-radius: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
-
+    #map {
+        height: 100%;
+    }
+    #list-mobile {
+        display: none;
+    }
     #category {
-        background-color: #3B3A33;
+        height: 15%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        padding-top: 10px;
     }
+}
 
-    .selected {
-        color: #FFADD9;
-        font-weight: bold;
+
+/*Make adjustments for screens smaller than 450*/
+
+@media only screen and (max-width: 450px) {
+    h4 {
+        padding-top: 2px;
+        font-size: 4.5vw
     }
-
+    h3 {
+        font-size: 4.5vw;
+    }
+    h2 {
+        margin: 5px 0px 5px;
+        font-size: 4.5vw
+    }
+    ul {
+        margin: 0;
+    }
+    li {
+        font-size: 4.5vw;
+    }
+    #category {
+        height: 50%;
+    }
     #list {
         background-color: #F7DE50;
-        overflow: scroll;
-        height: 72%;
         border-radius: 10px;
+        height: 32%;
     }
+}
 
-    li:hover {
-        font-weight: bold;
+@media only screen and (min-width: 450px) and (max-width: 700px) {
+    #category {
+        height: 32%;
     }
-
-    #category li:hover {
-        color: ##F7DE50;
+    #list {
+        background-color: #F7DE50;
+        border-radius: 10px;
+        height: 50%;
     }
+}
 
-    ul {
-        list-style-type: none;
+@media only screen and (max-width: 700px) {
+    #panel {
+        height: 45%;
+        width: 100%;
+        position: relative;
+        z-index: auto;
     }
-
-    #list li {
-        margin-top: 3px;
-        margin-bottom: 3px;
-        color: #3B3A33;
+    #search-window {
+        height: 50%;
     }
-
+    #topSection {
+        height: 15%;
+        padding-bottom: 2px;
+        border: 2px solid;
+    }
+    #header {
+        height: 50%;
+    }
+    #searchBox {
+        width: 35vw;
+        height: 1.5vh;
+    }
+    #clearButton {
+        height: 2.5vh;
+    }
+    #listItems {
+        overflow: scroll;
+        height: 75%;
+    }
     #list h4 {
         color: #3B3A33;
     }
-
-    .infoWindow {
+    #list li {
         color: #3B3A33;
     }
-    /*Make adjustments for screens larget than 450*/
-
-    @media only screen and (min-width: 451px) {
-        #topSection {
-            border-radius: 10px;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-        #map {
-            height: 100%;
-        }
-
-        #list-mobile {
-            display: none;
-        }
-        #category {
-            height: 15%;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            padding-top: 10px;
-        }
+    #map {
+        position: relative;
+        height: 55%;
+        width: 100%;
+        float: left;
     }
-    /*Make adjustments for screens smaller than 450*/
-
-    @media only screen and (max-width: 450px) {
-        h4 {
-            padding-top: 2px;
-            font-size: 5vw
-        }
-        h3 {
-            font-size: 4.5vw;
-        }
-        h2 {
-            margin: 5px 0px 5px;
-            font-size: 5vw
-        }
-        ul {
-            margin: 0;
-        }
-        #panel {
-            height: 45%;
-            width: 100%;
-            position: relative;
-            z-index: auto;
-        }
-        #search-window {
-            height: 50%;
-        }
-        #topSection {
-            height: 15%;
-            padding-bottom: 2px;
-            border: 2px solid;
-        }
-        #header {
-            height: 50%;
-        }
-        #searchBox {
-            width: 35vw;
-            height: 1.5vh;
-        }
-        #clearButton {
-            height: 2.5vh;
-        }
-        #category {
-            height: 50%;
-        }
-        #category li {
-            font-size: 5vw;
-        }
-        #list {
-            display: none;
-        }
-        #list-mobile {
-            background-color: #F7DE50;
-            overflow: scroll;
-            border-radius: 10px;
-            height: 32%;
-        }
-        #list-mobile h4 {
-            color: #3B3A33;
-        }
-        #list-mobile li {
-            color: #3B3A33;
-        }
-        #map {
-            position: relative;
-            height: 55%;
-            width: 100%;
-            float: left;
-        }
-    }
+}

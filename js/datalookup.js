@@ -4,16 +4,41 @@ GOOGLE MAP GEO API AND TO FILTER DATA AND ARRANGE IT TO USESFUL OBJECTS AND ARRA
 
 //Make the first map with specific parameters using google map API
 //Make the first map with specific parameters using google map API
+var windowWidth = window.innerWidth;
 
+var zoomLevel = 15;
+
+var mapLat = 34.1;
+
+var mapLng = -118.332;
+
+if (windowWidth < 701) {
+    zoomLevel = 14;
+} else {
+
+    var percentFromIdeal = (100 - windowWidth / 1300 * 100);
+
+    var centerLngOffset = 0.00021604 * percentFromIdeal;
+
+    var mapLng = mapLng + centerLngOffset;
+
+    console.log("map offset: " + centerLngOffset);
+    console.log("mapLng: " + mapLng);
+}
 
 
 map = new google.maps.Map(document.getElementById('map'), {
     center: {
-        lat: 34.101630,
-        lng: -118.326684
+        lat: mapLat,
+        lng: mapLng
+            //34.1,-118.325
     },
-    zoom: 15
+    zoom: zoomLevel
 });
+
+
+
+
 
 //show the map has loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
