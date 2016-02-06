@@ -13,7 +13,7 @@
     <div id="panel">
         <div id="topSection">
             <div id="header">
-                <h3>Find Stars On The Hollywood Walk Of Fame</h3></div>
+                <h3>Find&nbsp;Stars&nbsp;on&nbsp;the Hollywood&nbsp;Walk&nbsp;of&nbsp;Fame</h3></div>
             <div id="search-window">
                 <div id="searchForm">
                     <!-- Make text-input window, binds input value to query KO observable, and
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div id="category">
-            <h4>Click a Category for Full List of Names</h4>
+            <h4>Click&nbsp;a&nbsp;Category&nbsp;for&nbsp;a Full&nbsp;List&nbsp;of&nbsp;Names</h4>
             <!--Using KO data-bind to create main categories-->
             <ul data-bind="foreach: category">
                 <!--Creates clickable category list. Also, use KO css binding to distinguish
@@ -33,20 +33,19 @@
                 <li data-bind="css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector">★ <span data-bind="text: $data"></span></li>
             </ul>
         </div>
-        <div id="list">
-            <div>
-                <h4><button id="previous" data-bind="click: previousRange">Previous</button>Your Current List<button id="next" data-bind="click: nextRange">Next</button></h4>
-            </div>
-            <!--Using KO data-bind to create dynamic list items-->
-            <div id="listItems">
-                <ul data-bind="foreach: walkOfFameList">
-                    <!--the text for each item would be the full name and once clicked
-                it would activate the markerMaker method-->
-                    <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
-                </ul>
-            </div>
+        <div class="list" id="listHeader">
+            <h4><button id="previous" data-bind="click: previousRange">Back</button>&nbsp;&nbsp;&nbsp;Your Current List&nbsp;&nbsp;&nbsp;<button id="next" data-bind="click: nextRange">Next</button></h4>
         </div>
-        <!--Make windows always visible in sub 450 devices
+        <!--Using KO data-bind to create dynamic list items-->
+        <div class="list" id="listGroup">
+            <ul data-bind="foreach: walkOfFameList">
+                <!--the text for each item would be the full name and once clicked
+                it would activate the markerMaker method-->
+                <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
+            </ul>
+        </div>
+    </div>
+    <!--Make windows always visible in sub 450 devices
         <div id="list-mobile">
             <h4>Your Current List</h4>
             <ul data-bind="foreach: walkOfFameList">

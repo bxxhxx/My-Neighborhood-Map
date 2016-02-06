@@ -24,6 +24,10 @@ if (windowWidth < 701) {
 
     console.log("map offset: " + centerLngOffset);
     console.log("mapLng: " + mapLng);
+
+    if (windowWidth < 1000) {
+        zoomLevel = 14;
+    }
 }
 
 
@@ -33,7 +37,12 @@ map = new google.maps.Map(document.getElementById('map'), {
         lng: mapLng
             //34.1,-118.325
     },
-    zoom: zoomLevel
+    zoom: zoomLevel,
+    zoomControl: true,
+    zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+    },
+    streetViewControl: false
 });
 
 
