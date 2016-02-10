@@ -3,7 +3,6 @@ GOOGLE MAP GEO API AND TO FILTER DATA AND ARRANGE IT TO USESFUL OBJECTS AND ARRA
 
 
 //Make the first map with specific parameters using google map API
-//Make the first map with specific parameters using google map API
 var windowWidth = window.innerWidth;
 
 var zoomLevel = 15;
@@ -35,7 +34,6 @@ map = new google.maps.Map(document.getElementById('map'), {
     center: {
         lat: mapLat,
         lng: mapLng
-            //34.1,-118.325
     },
     zoom: zoomLevel,
     zoomControl: true,
@@ -68,8 +66,10 @@ function isEmpty(obj) {
 
 }
 //This function sorts the data coming from Wikipedia (ajax request)
-var sortTheData = function(response) {
+var sortTheData = function(wikiItems) {
     //Using split to divide up the raw data from wikipedia in to info strings
+    var response =  wikiItems.replace("}\n\n==No","-\n|");
+
     var rawDataArray = response.split("| [[");
     var clean1DataArray = [];
     //This for loop will restructure each data string into a more coherent data object
@@ -81,12 +81,14 @@ var sortTheData = function(response) {
         rawDataArray[i] = rawDataArray[i].replace("]]", "");
         rawDataArray[i] = rawDataArray[i].replace(/\n\|-\n/g, "||");
         rawDataArray[i] = rawDataArray[i].replace(/\|\|\|/g, "||");
+        rawDataArray[i] = rawDataArray[i].replace("Hollywood & Vine", "Hollywood Blvd. at Vine St.");
+        rawDataArray[i] = rawDataArray[i].replace("½", "");
         //Splits different category of information based on the double pipe
-        newObjectSourceArray = rawDataArray[i].split("||");
-
+        var newObjectSourceArray = rawDataArray[i].split("||");
+        // clips off useless item at end of newObjectSourceArray
         newObjectSourceArray.pop();
+        //trim the white space around data all strings in newObjectSourceArray
         for (var j = 0; j < newObjectSourceArray.length; j++) {
-            //trim the white space around data strings
             newObjectSourceArray[j] = newObjectSourceArray[j].trim();
         }
 
@@ -100,63 +102,73 @@ var sortTheData = function(response) {
         if (pipePosition > 0) {
             newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
         }
-
-        //The following if/else if's directs the data into named properties
-        //on the empty newObject
-        if (newObjectSourceArray.length === 3) {
-            newObject.fullName = newObjectSourceArray[0];
-            newObject.category = [newObjectSourceArray[1]];
-            newObject.address = [newObjectSourceArray[2]];
-            //newObject.lat = [];
-            //newObject.lng = [];
-        } else if (newObjectSourceArray.length === 5) {
-            newObject.fullName = newObjectSourceArray[0];
-            newObject.category = [newObjectSourceArray[1]];
-            newObject.address = [newObjectSourceArray[2]];
-            newObject.category.push(newObjectSourceArray[3]);
-            newObject.address.push(newObjectSourceArray[4]);
-            //newObject.lat = [];
-            //newObject.lng = [];
-        } else if (newObjectSourceArray.length === 7) {
-            newObject.fullName = newObjectSourceArray[0];
-            newObject.category = [newObjectSourceArray[1]];
-            newObject.address = [newObjectSourceArray[2]];
-            newObject.category.push(newObjectSourceArray[3]);
-            newObject.address.push(newObjectSourceArray[4]);
-            newObject.category.push(newObjectSourceArray[5]);
-            newObject.address.push(newObjectSourceArray[6]);
-            //newObject.lat = [];
-            //newObject.lng = [];
-        } else if (newObjectSourceArray.length === 9) {
-            newObject.fullName = newObjectSourceArray[0];
-            newObject.category = [newObjectSourceArray[1]];
-            newObject.address = [newObjectSourceArray[2]];
-            newObject.category.push(newObjectSourceArray[3]);
-            newObject.address.push(newObjectSourceArray[4]);
-            newObject.category.push(newObjectSourceArray[5]);
-            newObject.address.push(newObjectSourceArray[6]);
-            newObject.category.push(newObjectSourceArray[7]);
-            newObject.address.push(newObjectSourceArray[8]);
-            //newObject.lat = [];
-            //newObject.lng = [];
-        } else if (newObjectSourceArray.length === 11) {
-            newObject.fullName = newObjectSourceArray[0];
-            newObject.category = [newObjectSourceArray[1]];
-            newObject.address = [newObjectSourceArray[2]];
-            newObject.category.push(newObjectSourceArray[3]);
-            newObject.address.push(newObjectSourceArray[4]);
-            newObject.category.push(newObjectSourceArray[5]);
-            newObject.address.push(newObjectSourceArray[6]);
-            newObject.category.push(newObjectSourceArray[7]);
-            newObject.address.push(newObjectSourceArray[8]);
-            newObject.category.push(newObjectSourceArray[9]);
-            newObject.address.push(newObjectSourceArray[10]);
-            //newObject.lat = [];
-            //newObject.lng = [];
+        pipePosition = fullNameString.indexOf("|A");
+        if (pipePosition > 0) {
+            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
+        }
+        pipePosition = fullNameString.indexOf("{{");
+        if (pipePosition > 0) {
+            newObjectSourceArray[0] = fullNameString.substring(0, pipePosition);
         }
 
+        //check for data issue on "end of section" addresses from wikipedia
+        for (var j = 2; j < newObjectSourceArray.length; j += 2) {
+            if (newObjectSourceArray[j].indexOf("! Name") > -1) {
+                newObjectSourceArray.pop();
+                newObjectSourceArray.pop();
+            }
+            if (newObjectSourceArray[j]) {
+                //split the address into number/word parts in an array (using " "), for correcting bad addresses
+                var addressCheckArray = newObjectSourceArray[j].split(" ");
+                //convert first item (number in string) to mathematical number using parseInt
+                var addressInteger = parseInt(addressCheckArray[0], 10);
+                if ((addressInteger < 5000) && (addressCheckArray[1].indexOf("Hollywood") > -1)) {
+                    newObjectSourceArray[j] = "" + addressInteger + " Vine St.";
+                }
+                if ((addressInteger > 6000) && (addressCheckArray[1].indexOf("Vine") > -1)) {
+                    newObjectSourceArray[j] = "" + addressInteger + " Hollywood Blvd.";
+                }
+                if (addressInteger === 6915) {
+                    newObjectSourceArray[j] = "6915 Hollywood Blvd.";
+                }
+
+                newObjectSourceArray[j] = newObjectSourceArray[j].replace("Special Plaque", "");
+
+                pipePosition = 0;
+                pipePosition = newObjectSourceArray[j].indexOf("|}");
+                if (pipePosition > 0) {
+                    newObjectSourceArray[j] = newObjectSourceArray[j].substring(0, pipePosition);
+                }
+            }
+        };
+        //2nd pass on "end of section" errors - clips errant data
+        for (var j = 0; j < newObjectSourceArray.length; j ++) {
+            if (newObjectSourceArray[j].indexOf("! Name") > -1) {
+                newObjectSourceArray.pop();
+            }
+        };
 
 
+        if ((((newObjectSourceArray.length / 2) % 2) !== 0) && (newObjectSourceArray.length < 12)) {
+
+            newObject.fullName = newObjectSourceArray[0];
+            newObject.category = [];
+            newObject.address = [];
+            //Because some names have more than 1 star, determine how many stars
+            var numberOfStars = (newObjectSourceArray.length - 1) / 2;
+            //then loop to push corresponding categories and address into arrays
+            for (var j = 0; j < numberOfStars; j++) {
+                // yields the number of stars they have
+                var arrayPosition = 2 * j;
+                newObject.category.push(newObjectSourceArray[arrayPosition + 1]);
+
+                newObject.address.push(newObjectSourceArray[arrayPosition + 2]);
+
+            }
+        } else {
+            console.log("problem child:");
+            console.log(newObjectSourceArray);
+        }
 
         //Pushing the new newObject sorted above into the completeStarDataModel
 
@@ -164,54 +176,7 @@ var sortTheData = function(response) {
             completeStarDataModel.push(newObject);
             //console.log(newObject);
         }
-
     }
-};
-//THIS CODE IS NOT GOING TO BE USED - GEOCODING WILL BE DONE IN APP.JS FOR EACH MARKER
-var geocodeCounter = 0;
-var geoCodeAll = function() {
-
-    var currentObject = completeStarDataModel[geocodeCounter];
-    var currentAddressLength = currentObject.address.length;
-    var currentAddressNumber = 0;
-
-    var geocodeObject = function() {
-
-        var searchURL = "https://maps.googleapis.com/maps/api/geocode/"
-        var addressString = currentObject.address[currentAddressNumber] + ",+Los+Angeles,+CA";
-        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
-                null,
-                function(data, status) {
-                    //console.log("worked");
-                    //console.log(geocodeCounter);
-                    if (data.status == "OK") {
-                        ///console.log(data);
-                        var p = data.results[0].geometry.location;
-                        //console.log(p.lat);
-                        //console.log(p.lng);
-                        currentObject.lat.push(p.lat);
-                        currentObject.lng.push(p.lng);
-                    } else {
-                        currentObject.lat.push(99);
-                        currentObject.lng.push(99);
-                    }
-                    currentAddressNumber++
-
-                })
-            .done(function() {
-                if (currentAddressNumber < currentAddressLength) {
-                    geocodeObject();
-                } else if (geocodeCounter < 2400) {
-                    geocodeCounter++
-                    geoCodeAll();
-                } else {
-                    var completeStarDataModeltoString = JSON.stringify(completeStarDataModel);
-                    //console.log(completeStarDataModeltoString);
-                    document.body.appendChild(document.createElement("p")).innerHTML = completeStarDataModeltoString;
-                }
-            });
-    };
-    geocodeObject();
 };
 
 //This is ajax request with specific parameters requested by Wikipedia's API in
@@ -229,15 +194,12 @@ $.ajax({
 }).done(function(response) {
     //Puts the response json into a variable and then runs a sorting function
     var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
-    console.log("1 Wiki returns full list" + new Date());
     sortTheData(wikiItems);
-    console.log("2 All Wiki data sorted" + new Date());
-
-    //geoCodeAll();
 
     ko.applyBindings(new ViewModel());
-
-    //Activates KO on ViewModel
-
-
+})
+//Error handling for wikipedia api fail
+.fail( function(){
+    var elem = document.getElementById("listGroup");
+    elem.innerHTML = '<p class="error">Wikipedia data unavailable! <br/>Please check later!</p>';
 });

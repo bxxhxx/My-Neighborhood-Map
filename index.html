@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+   <!--  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My N-Hood Map</title>
     <link rel="stylesheet" href="css/style.css">
@@ -41,7 +42,7 @@
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
                 it would activate the markerMaker method-->
-                <li data-bind="text: fullName, visible: show, click: $parent.chooseStar"></li>
+                <li data-bind="visible: show, click: $parent.chooseStar"><span data-bind="text: fullName"></span> <span data-bind="visible: categoryVisible"> - <span data-bind="text: category"></span></span></li>
             </ul>
         </div>
     </div>

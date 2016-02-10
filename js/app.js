@@ -3,8 +3,6 @@ var ViewModel = function() {
     //Make a hook to grab the context in the lower level scope
     var self = this;
 
-
-
     //Make Star prototype with the following specific parameters
     this.Star = function(starObject) {
         this.fullName = ko.observable(starObject.fullName);
@@ -21,6 +19,11 @@ var ViewModel = function() {
         this.show = ko.observable(false);
         //A placekeeper for attaching the map marker
         this.marker = null;
+        //will determine if category is displayed with fullName in list items
+        this.categoryVisible = ko.observable(false);
+        //marks if a starObject is a "multiple" with the same name for other categories/stars
+        //used for calculating if category should be displayed (see "showRangeEvaluator")
+        this.multiple = starObject.multiple;
     };
 
     //Create a KO observable array
@@ -40,19 +43,6 @@ var ViewModel = function() {
     this.topOrder = 0;
 
     this.infowindow = new google.maps.InfoWindow();
-    //Set North West, South East bounderies for the map and attach them to the
-    //newly created map (helpful for mobil use)
-    /*
-    var nwCorner = new google.maps.LatLng(34.1016067, -118.347);
-    var seCorner = new google.maps.LatLng(34.0978051, -118.3166061);
-    var bounds = new google.maps.LatLngBounds();
-    bounds.extend(nwCorner);
-    bounds.extend(seCorner);
-
-    map.fitBounds(bounds);*/
-
-
-
 
     //Prevents a page reload if one uses the submit on the search box
     var searchForm = document.getElementById("searchForm");
@@ -71,13 +61,24 @@ var ViewModel = function() {
     //star objects are pushed into walkOfFameList, a KO obeservable array.
     completeStarDataModel.forEach(function(starItem) {
         var starName = starItem.fullName;
+        var isStarMultiple = function(starItem) {
+            if (starItem.category.length > 1) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        var starMultiple = isStarMultiple(starItem);
         for (var i = 0; i < starItem.category.length; i++) {
             var starCategory = starItem.category[i];
+
             var starAddress = starItem.address[i];
             var starObject = {
                 fullName: starName,
                 category: starCategory,
                 address: starAddress,
+                multiple: starMultiple
             };
             self.walkOfFameList.push(new self.Star(starObject));
         }
@@ -89,12 +90,22 @@ var ViewModel = function() {
         if ((star.order >= self.rangeStart) &&
             (star.order < (self.rangeStart + 20))) {
             star.show(true);
+            //For stars that are "multiple" (same name, more than one star), calculates a true/false
+            //for "categoryVisible". This is used to display category on screen when duplicate names
+            //appear via name search (to distinguish the category for the stars).
+            var setCategoryVisible = function(star) {
+                if ((self.currentCategory() === "" && star.multiple === true)) {
+                    star.categoryVisible(true);
+                } else {
+                    star.categoryVisible(false);
+                }
+            };
+            setCategoryVisible(star);
             self.starSetter(star);
         } else {
             //Otherwise it will not show, and any existing marker will be cleared.
             self.starClear(star);
         }
-
     };
 
     //A function that removes a marker from the map and insures no name is shows on the current list
@@ -192,9 +203,6 @@ var ViewModel = function() {
                         if (walkOfFameListItem.show() === true) {
                             walkOfFameListItem.marker.setMap(map);
                         }
-
-                    } else {
-                        console.log(status);
                     }
                 });
         } else {
@@ -208,10 +216,31 @@ var ViewModel = function() {
     //Then make the clicked item the currentStar, then runs the info activate to open
     //the info window on the current star
     this.chooseStar = function(walkOfFameListItem) {
+        var windowWidth = window.innerWidth;
+        //change highlighted icon to normal icon for outgoing current star
+        var outgoingIcon;
+        //size checker
+        if (windowWidth < 701) {
+            outgoingIcon = "image/mobilstar.png";
+        } else {
+            outgoingIcon = "image/smallstar.png";
+        }
+        // reset current star to non-bounce, no highlight icon
         if (self.currentStar()) {
             self.currentStar().marker.setAnimation(null);
+            self.currentStar().marker.setIcon(outgoingIcon);
         }
         self.currentStar(walkOfFameListItem);
+        //now select the highlighted "activated" icon
+        var activeIcon;
+
+        if (windowWidth < 701) {
+            activeIcon = "image/mobilstarActivated.png";
+        } else {
+            activeIcon = "image/smallstarActivated.png";
+        }
+        //attach the highlighted "activated" icon
+        walkOfFameListItem.marker.setIcon(activeIcon);
         //Then opens the info window
         self.infoActivate(self.currentStar());
     };
@@ -234,28 +263,40 @@ var ViewModel = function() {
         var address = walkOfFameListItem.address;
         //ajax request to search fullName in wikipedia
         $.ajax({
-            url: wikiUrl,
-            data: {
-                action: "opensearch",
-                search: fullName,
-                format: "json",
-                limit: 1, //this parameter brings the first top item
-                namespace: 0 //this namespace searches the title of the Wiki articles
-            },
-            dataType: "jsonp"
-        }).done(function(response) {
-            wikiLink = response[3][0];
-            //Construct html for windowContent
-            var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
-                '<p>' + address + '</p>' +
-                //target blank opens the clicked page on a new tab
-                '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
-            //Inject the content to info window
-            self.infowindow.setContent(windowContent);
-            //Opens the info window on the chosen item
-            self.infowindow.open(map, walkOfFameListItem.marker);
-            self.toggleBounce(walkOfFameListItem);
-        });
+                url: wikiUrl,
+                data: {
+                    action: "opensearch",
+                    search: fullName,
+                    format: "json",
+                    limit: 1, //this parameter brings the first top item
+                    namespace: 0 //this namespace searches the title of the Wiki articles
+                },
+                dataType: "jsonp"
+            }).done(function(response) {
+                wikiLink = response[3][0];
+                //Construct html for windowContent
+                var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
+                    '<p>' + address + '</p>' +
+                    //target blank opens the clicked page on a new tab
+                    '<p>' + '<a target="_blank" href="' + wikiLink + '">Link to Wikipedia</a></p></div>';
+                //Inject the content to info window
+                self.infowindow.setContent(windowContent);
+                //Opens the info window on the chosen item
+                self.infowindow.open(map, walkOfFameListItem.marker);
+                self.toggleBounce(walkOfFameListItem);
+            })
+            //If Wikipedia request fails, places error message in info box
+            .fail(function() {
+                var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
+                    '<p>' + address + '</p>' +
+                    //error message
+                    '<p class="error">Wikipedia link unavailable - please try again later!</p></div>';
+                //Inject the content to info window
+                self.infowindow.setContent(windowContent);
+                //Opens the info window on the chosen item
+                self.infowindow.open(map, walkOfFameListItem.marker);
+                self.toggleBounce(walkOfFameListItem);
+            });
     };
 
     //Once a category is selected, it clears the searchbox and other counters.
@@ -306,5 +347,4 @@ var ViewModel = function() {
     };
     //Launch query to demo the app on first load.
     self.query("Charlie Chaplin");
-
 };

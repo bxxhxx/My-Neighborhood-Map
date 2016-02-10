@@ -23,6 +23,10 @@ ul {
     margin: 0;
 }
 
+.error {
+    color: red;
+}
+
 #panel {
     height: 100%;
     width: 300px;
@@ -130,6 +134,7 @@ ul {
 /*Make adjustments for screens small*/
 
 @media only screen and (max-width: 700px) {
+
     #panel {
         height: 45%;
         width: 100%;
@@ -169,7 +174,7 @@ ul {
         padding-top: 0;
     }
     #category li {
-        font-size: medium;
+        font-size: 2vh;
     }
     .list h4 {
         color: #3B3A33;
@@ -185,7 +190,7 @@ ul {
     }
     #listGroup li {
         color: #3B3A33;
-        font-size: medium;
+        font-size: 2vh;
     }
     #map {
         position: relative;
@@ -225,7 +230,23 @@ ul {
 }
 
 @media only screen and (min-width: 450px) and (max-width: 700px) {
-    #category {
+    h4 {
+        padding-top: 2px;
+        font-size: 3vw
+    }
+    h3 {
+        font-size: 3.25vw;
+    }
+    h2 {
+        margin: 5px 0px 5px;
+        font-size: 4.5vw
+    }
+    ul {
+        margin: 0;
+    }
+    li {
+        font-size: 4.5vw;
+    }#category {
         height: 40%;
     }
     #listHeader {
