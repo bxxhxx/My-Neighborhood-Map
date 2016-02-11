@@ -36,7 +36,6 @@ ul {
     background-color: transparent;
     padding-right: 10px;
     z-index: 1;
-    /*floats panel above map*/
 }
 
 #topSection {
@@ -110,8 +109,6 @@ ul {
 #listGroup {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    /*height: 55%;
-    overflow-y: scroll;*/
 }
 
 #listGroup li {
@@ -130,11 +127,8 @@ ul {
     float: left;
 }
 
-
-/*Make adjustments for screens small*/
-
+/*Make adjustments for smaller screens*/
 @media only screen and (max-width: 700px) {
-
     #panel {
         height: 45%;
         width: 100%;
@@ -184,7 +178,6 @@ ul {
     }
     #listGroup {
         overflow-y: scroll;
-        /*(*only see up-down scroll bar (not left-right)*/
         border-radius: 0;
         background-color: #F7DE50;
     }
@@ -207,10 +200,6 @@ ul {
     }
     h3 {
         font-size: 4.5vw;
-    }
-    h2 {
-        margin: 5px 0px 5px;
-        font-size: 4.5vw
     }
     ul {
         margin: 0;
@@ -237,16 +226,13 @@ ul {
     h3 {
         font-size: 3.25vw;
     }
-    h2 {
-        margin: 5px 0px 5px;
-        font-size: 4.5vw
-    }
     ul {
         margin: 0;
     }
     li {
         font-size: 4.5vw;
-    }#category {
+    }
+    #category {
         height: 40%;
     }
     #listHeader {

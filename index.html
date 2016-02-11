@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-   <!--  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My N-Hood Map</title>
+    <title>My Neighborhood Map</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_Rbe4lbe9Thsl4jdovR-J3qtWIi7yK4"></script>
 </head>
@@ -18,9 +17,9 @@
             <div id="search-window">
                 <div id="searchForm">
                     <!-- Make text-input window, binds input value to query KO observable, and
-                    it runs an update after every keyup stroke. This triggers a live search sorting through a search funcion in the viewModel-->
+                    it runs an update after every keydown stroke. This triggers a "live search" sorting through a search funcion in the viewModel-->
                     <input id="searchBox" type="text" name="search" placeholder="search for a star" data-bind="value: query, valueUpdate: 'afterkeydown'" autocomplete="off" />
-                    <!--Make Ko data-bind to click even to clear searachBox and current category-->
+                    <!--Make Ko data-bind to click event to clear searchBox and current category-->
                     <button id="clearButton" data-bind="click: clearButton">Clear</button>
                 </div>
             </div>
@@ -35,29 +34,25 @@
             </ul>
         </div>
         <div class="list" id="listHeader">
+            <!-- databind invokes range updating functions in the ViewModel, to advance or rewind the list -->
             <h4><button id="previous" data-bind="click: previousRange">Back</button>&nbsp;&nbsp;&nbsp;Your Current List&nbsp;&nbsp;&nbsp;<button id="next" data-bind="click: nextRange">Next</button></h4>
         </div>
         <!--Using KO data-bind to create dynamic list items-->
         <div class="list" id="listGroup">
             <ul data-bind="foreach: walkOfFameList">
                 <!--the text for each item would be the full name and once clicked
-                it would activate the markerMaker method-->
-                <li data-bind="visible: show, click: $parent.chooseStar"><span data-bind="text: fullName"></span> <span data-bind="visible: categoryVisible"> - <span data-bind="text: category"></span></span></li>
+                it would activate the chooseStar method. Also, a category is shown with list item if a search yields
+                multiple stars for the same name -->
+                <li data-bind="visible: show, click: $parent.chooseStar"><span data-bind="text: fullName"></span> <span data-bind="visible: categoryVisible"> - <span data-bind="text: category"></span></span>
+                </li>
             </ul>
         </div>
     </div>
-    <!--Make windows always visible in sub 450 devices
-        <div id="list-mobile">
-            <h4>Your Current List</h4>
-            <ul data-bind="foreach: walkOfFameList">
-                <li data-bind="text: fullName, visible: show, click: $parent.infoActivate"></li>
-            </ul>
-        </div>-->
     </div>
     <div id="map"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-    <!-- <script src="js/data.js"></script> -->
+    <script src="js/default-hardcoded-data.js"></script>
     <script src="js/datalookup.js"></script>
     <script src="js/app.js"></script>
 </body>
