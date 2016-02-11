@@ -53,6 +53,7 @@ var sortTheData = function(wikiItems) {
     };
     //Using split to divide up the raw data from wikipedia in to info strings
     var response = wikiItems.replace("}\n\n==No", "-\n|");
+    response = response.replace(/\'\'/g, "");
     var rawDataArray = response.split("| [[");
     //This for loop will restructure each data string in rawDataArray into
     //a more coherent data object. It  skips item [0] which was header information
@@ -61,7 +62,24 @@ var sortTheData = function(wikiItems) {
         var newObject = {};
         //Using replace function to get rid off extraneous characters
         rawDataArray[i] = rawDataArray[i].replace("]]", "");
+        //fix formatting
+        var cutPosition;
+        if (rawDataArray[i].indexOf("\n\|-\n\|") > -1) {
+            if ((rawDataArray[i].indexOf("\n\|-\n\| Radio") === -1) &&
+                (rawDataArray[i].indexOf("\n\|-\n\| Live") === -1) &&
+                (rawDataArray[i].indexOf("\n\|-\n\| Television") === -1) &&
+                (rawDataArray[i].indexOf("\n\|-\n\| Motion") === -1) &&
+                (rawDataArray[i].indexOf("\n\|-\n\| Recording") === -1)) {
+                cutPosition = rawDataArray[i].indexOf("\n\|-\n\|");
+                rawDataArray[i] = rawDataArray[i].substring(0, cutPosition) + "\n\|-\n\|";
+            }
+        }
+        if (rawDataArray[i].indexOf("\n\|-\n\| Dick Martin") > -1) {
+            cutPosition = rawDataArray[i].indexOf("\n\|-\n\| Dick Martin");
+            rawDataArray[i] = rawDataArray[i].substring(0, cutPosition) + "\n\|-\n\|";
+        }
         rawDataArray[i] = rawDataArray[i].replace(/\n\|-\n/g, "||");
+        rawDataArray[i] = rawDataArray[i].replace(/\n\|- \n/g, "||");
         rawDataArray[i] = rawDataArray[i].replace(/\|\|\|/g, "||");
         rawDataArray[i] = rawDataArray[i].replace("Hollywood & Vine", "Hollywood Blvd. at Vine St.");
         rawDataArray[i] = rawDataArray[i].replace("½", "");
@@ -75,7 +93,7 @@ var sortTheData = function(wikiItems) {
         }
         //Using indexOf to locate and then remove duplicate description, etc
         var fullNameString = newObjectSourceArray[0];
-        var cutPosition = fullNameString.indexOf("|");
+        cutPosition = fullNameString.indexOf("|");
         if (cutPosition > 0) {
             newObjectSourceArray[0] = fullNameString.substring(0, cutPosition);
         }
