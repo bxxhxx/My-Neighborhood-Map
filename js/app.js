@@ -40,7 +40,24 @@ var ViewModel = function() {
     //range refers to start position in the chosen item group
     this.rangeStart = 0;
 
+    this.range = (function() {
+        if (window.innerWidth < 700) {
+            return 5;
+        } else {
+            return 20;
+        }
+    })();
+
     this.infowindow = new google.maps.InfoWindow();
+
+    this.isMobile = ko.observable((function() {
+        if (window.innerWidth < 700) {
+            return true;
+            self.range = 3;
+        } else {
+            return false;
+        }
+    })());
 
     //Create a KO array with all main five categories
     this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
@@ -79,7 +96,7 @@ var ViewModel = function() {
      */
     this.showRangeEvaluator = function(star) {
         if ((star.order >= self.rangeStart) &&
-            (star.order < (self.rangeStart + 20))) {
+            (star.order < (self.rangeStart + self.range))) {
             star.show(true);
             /* For stars that are "multiple" (same name, more than one star), calculates a true/false
              * for "categoryVisible". This is used to display category on screen when duplicate names
@@ -318,8 +335,7 @@ var ViewModel = function() {
      * past top of list. If so, it doesn't change the rangeStart)
      */
     this.nextRange = function() {
-        var updateRange = self.rangeStart + 20;
-
+        var updateRange = self.rangeStart + self.range;
         if (updateRange < self.topOrder) {
             self.rangeStart = updateRange;
             self.walkOfFameList().forEach(function(star) {
@@ -332,8 +348,7 @@ var ViewModel = function() {
      * Checks to see if range has been reduced below zero position; if so, doesn't change rangeStart
      */
     this.previousRange = function() {
-        var updateRange = self.rangeStart - 20;
-
+        var updateRange = self.rangeStart - self.range;
         if (updateRange >= 0) {
             self.rangeStart = updateRange;
             self.walkOfFameList().forEach(function(star) {

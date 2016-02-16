@@ -72,16 +72,30 @@ ul {
     background-color: #ebebeb;
 }
 
+.listButton {
+    display: inline-block;
+    height: 2.5vmax;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: #ebebeb;
+}
+
 #category {
     background-color: #3b3a33;
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 10px;
     padding-top: 10px;
+    float: left;
+    width: 100%;
 }
 
-#category li {
+li {
     font-size: 1.8vmin;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 #category li:hover {
@@ -98,20 +112,21 @@ ul {
     color: #3b3a33;
 }
 
+#listContainer {
+    width: 100%;
+    float: left;
+}
+
 #listHeader {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    display: none;
 }
 
 #listGroup {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-}
-
-#listGroup li {
-    font-size: 1.8vmin;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    display: none;
 }
 
 .infoWindow {
@@ -124,16 +139,15 @@ ul {
     float: left;
 }
 
-/*Make adjustments for smaller screens*/
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 450px) {
     #panel {
-        height: 45%;
+        height: 50%;
         width: 100%;
         position: relative;
         z-index: auto;
     }
     #topSection {
-        height: 15%;
+        height: 20%;
         padding-top: 0;
         padding-bottom: 2px;
         border: 2px solid;
@@ -146,91 +160,114 @@ ul {
         height: 50%;
     }
     #searchBox {
-        width: 35vw;
-        height: 1.5vh;
+        width: 30vmax;
+        height: 4vh;
         border-top-width: 2px;
         border-bottom-width: 2px;
         padding-top: 1px;
         padding-bottom: 1px;
+        box-sizing: border-box;
     }
     #clearButton {
-        height: 2.5vh;
+        height: 4vh;
         padding-top: 0;
         padding-bottom: 0;
     }
+    .listButton {
+        display: block;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-width: 0;
+        height: 4vh;
+    }
     #category {
+        height: 80%;
+        width: 50%;
         margin-top: 0;
         margin-bottom: 0;
         border-radius: 0;
         padding-top: 0;
     }
-    #category li {
-        font-size: 2vh;
-    }
+
     .list h4 {
         color: #3b3a33;
     }
     #listHeader {
         border-radius: 0;
+        height: 20%;
+    }
+    #previous {
+        float: left;
+    }
+    #next {
+        float: right;
     }
     #listGroup {
-        overflow-y: scroll;
         border-radius: 0;
+        background-color: #f7de50;
+    }
+    #listContainer {
+        width: 50%;
+        height: 80%;
+        width: 50%;
         background-color: #f7de50;
     }
     #listGroup li {
         color: #3b3a33;
-        font-size: 2vh;
+
     }
     #map {
         position: relative;
-        height: 55%;
+        height: 50%;
         width: 100%;
         float: left;
     }
-}
-
-@media only screen and (max-width: 450px) {
     h4 {
         padding-top: 2px;
-        font-size: 4.5vw
+        font-size: 4.5vw;
     }
     h3 {
         font-size: 4.5vw;
     }
     ul {
         margin: 0;
+        padding-left: 2vmax;
+    }
+    #category ul {
+        padding-top: 3.8vh;
+    }
+    #listGroup ul {
+        padding-top: 2vh;
     }
     li {
-        font-size: 4.5vw;
+        font-size: 2.75vmax;
+        padding-top: 3px;
+        padding-bottom: 3px;
     }
-    #category {
-        height: 50%;
-    }
-    #listHeader {
-        height: 8%;
-    }
-    #listGroup {
-        height: 27%;
+    p {
+        margin-top: .25vh;
+        margin-bottom: .25vh;
+        padding: 0 5vmax;
     }
 }
 
 @media only screen and (min-width: 450px) and (max-width: 700px) {
     h4 {
         padding-top: 2px;
-        font-size: 3vw
+        font-size: 3vmax
     }
     h3 {
-        font-size: 3.25vw;
+        font-size: 3.25vmax;
     }
     ul {
         margin: 0;
     }
     li {
-        font-size: 4.5vw;
+        font-size: 4.5vmax;
     }
     #category {
         height: 40%;
+        width: 50%;
     }
     #listHeader {
         height: 10%;
@@ -238,11 +275,8 @@ ul {
     #listGroup {
         height: 35%;
     }
-}
-
-@media only screen and (min-width: 450px) {
-    #category li {
-        padding-top: 3px;
-        padding-bottom: 3px;
+    #listContainer {
+        width: 50%;
     }
 }
+

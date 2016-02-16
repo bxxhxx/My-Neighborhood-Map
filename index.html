@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Neighborhood Map</title>
-    <link rel="stylesheet" href="css/style.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_Rbe4lbe9Thsl4jdovR-J3qtWIi7yK4"></script>
 </head>
 
@@ -33,27 +33,38 @@
                 <li data-bind="css: {selected: $data  === $parent.currentCategory()}, click: $parent.categorySelector">★ <span data-bind="text: $data"></span></li>
             </ul>
         </div>
-        <div class="list" id="listHeader">
-            <!-- databind invokes range updating functions in the ViewModel, to advance or rewind the list -->
-            <h4><button id="previous" data-bind="click: previousRange">Back</button>&nbsp;&nbsp;&nbsp;Your Current List&nbsp;&nbsp;&nbsp;<button id="next" data-bind="click: nextRange">Next</button></h4>
-        </div>
-        <!--Using KO data-bind to create dynamic list items-->
-        <div class="list" id="listGroup">
-            <ul data-bind="foreach: walkOfFameList">
-                <!--the text for each item would be the full name and once clicked
+        <div id="listContainer">
+        <!-- ko ifnot: isMobile() -->
+            <div class="list" id="listHeader">
+                <!-- databind invokes range updating functions in the ViewModel, to advance or rewind the list -->
+                <h4><button id="previous" data-bind="click: previousRange">Back</button>&nbsp;&nbsp;&nbsp;Your Current List&nbsp;&nbsp;&nbsp;<button id="next" data-bind="click: nextRange">Next</button></h4>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: isMobile() -->
+            <div class="list" id="listHeader">
+                <!-- databind invokes range updating functions in the ViewModel, to advance or rewind the list -->
+                <h4>Your Current List</h4>
+                <p><button class="listButton" id="previous" data-bind="click: previousRange">Back</button><button class="listButton" id="next" data-bind="click: nextRange">Next</button></p>
+            </div>
+            <!-- /ko -->
+            <!--Using KO data-bind to create dynamic list items-->
+            <div class="list" id="listGroup">
+                <ul data-bind="foreach: walkOfFameList">
+                    <!--the text for each item would be the full name and once clicked
                 it would activate the chooseStar method. Also, a category is shown with list item if a search yields
                 multiple stars for the same name -->
-                <li data-bind="visible: show, click: $parent.chooseStar"><span data-bind="text: fullName"></span> <span data-bind="visible: categoryVisible"> - <span data-bind="text: category"></span></span>
-                </li>
-            </ul>
+                    <li data-bind="visible: show, click: $parent.chooseStar"><span data-bind="text: fullName"></span> <span data-bind="visible: categoryVisible"> - <span data-bind="text: category"></span></span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div id="map"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-    <script src="js/default-hardcoded-data.min.js"></script>
-    <script src="js/datalookup.min.js"></script>
-    <script src="js/app.min.js"></script>
+    <script src="js/default-hardcoded-data.js"></script>
+    <script src="js/datalookup.js"></script>
+    <script src="js/app.js"></script>
 </body>
 
 </html>

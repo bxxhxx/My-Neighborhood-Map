@@ -35,9 +35,20 @@ var startMap = function() {
         zoomControlOptions: {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         },
-        streetViewControl: false
+        streetViewControl: false,
+        mapTypeControl: false
     });
     //attach map as global variable to document
+
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+        console.log("idle");
+        var listGroup = document.getElementById("listGroup");
+        var listHeader = document.getElementById("listHeader");
+
+        listHeader.style.display = "block";
+        listGroup.style.display = "block";
+
+    });
     document.map = map;
 };
 
