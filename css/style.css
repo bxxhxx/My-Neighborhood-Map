@@ -147,7 +147,7 @@ li {
         z-index: auto;
     }
     #topSection {
-        height: 20%;
+        height: 22%;
         padding-top: 0;
         padding-bottom: 2px;
         border: 2px solid;
@@ -161,11 +161,11 @@ li {
     }
     #searchBox {
         width: 30vmax;
-        height: 4vh;
+        height: 5vh;
         border-top-width: 2px;
         border-bottom-width: 2px;
         padding-top: 1px;
-        padding-bottom: 1px;
+        padding-bottom: .5vh;
         box-sizing: border-box;
     }
     #clearButton {
@@ -181,7 +181,7 @@ li {
         height: 4vh;
     }
     #category {
-        height: 80%;
+        height: 78%;
         width: 50%;
         margin-top: 0;
         margin-bottom: 0;
@@ -208,7 +208,7 @@ li {
     }
     #listContainer {
         width: 50%;
-        height: 80%;
+        height: 78%;
         width: 50%;
         background-color: #f7de50;
     }
@@ -228,16 +228,17 @@ li {
     }
     h3 {
         font-size: 4.5vw;
+        padding-top: 1vh;
     }
     ul {
         margin: 0;
         padding-left: 2vmax;
     }
     #category ul {
-        padding-top: 3.8vh;
+        padding-top: 3.2vh;
     }
     #listGroup ul {
-        padding-top: 2vh;
+        padding-top: 1.5vh;
     }
     li {
         font-size: 2.75vmax;
