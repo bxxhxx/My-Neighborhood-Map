@@ -39,16 +39,6 @@ var startMap = function() {
         mapTypeControl: false
     });
     //attach map as global variable to document
-
-    google.maps.event.addListenerOnce(map, 'idle', function() {
-        console.log("idle");
-        var listGroup = document.getElementById("listGroup");
-        var listHeader = document.getElementById("listHeader");
-
-        listHeader.style.display = "block";
-        listGroup.style.display = "block";
-
-    });
     document.map = map;
 };
 
@@ -202,7 +192,10 @@ var init = function() {
             //Puts the response json into a variable and then runs a sorting function
             var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
             sortTheData(wikiItems);
+            //Removes a class that hides duplicate html that will immediately be switched by KO
+            $(".list").removeClass('hideFirst');
             ko.applyBindings(new ViewModel());
+
         })
         //Error handling for wikipedia api fail then uses a default hardcoded data set
         .fail(function() {

@@ -33,15 +33,65 @@ var ViewModel = function() {
     this.currentCategory = ko.observable("");
     //Recieves the clicked star from the list
     this.currentStar = ko.observable(null);
+    //During resize, determines new value for isMobile
+    this.resizeMobileCalculator = function() {
+        var newHeight = window.innerHeight;
+        var newWidth = window.innerWidth;
+        //detects "mobile" when screen is portrait & <701w OR landscape <851w - relevant to styling
+        if ((newHeight > newWidth && newWidth < 701) ||
+            (newHeight < newWidth && newWidth < 851)) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+    //variable to use for resize function
+    var $window = $(window);
+    //resize function checks for mobil, chooses the correct icon size, it also reevalutes list range
+    $window.resize(function() {
+        self.isMobile(self.resizeMobileCalculator());
+        self.range = (function() {
+            if (self.isMobile() === true) {
+                return 5;
+            } else {
+                return 20;
+            }
+        })();
+        self.walkOfFameList().forEach(function(star) {
+            var activeIcon;
+
+            if (self.isMobile() === true) {
+                activeIcon = "image/mobilstar.png";
+            } else {
+                activeIcon = "image/smallstar.png";
+            }
+            //attach the highlighted "activated" icon
+            if (star.marker !== null) {
+                star.marker.setIcon(activeIcon);
+                self.showRangeEvaluator(star);
+            }
+        });
+
+    });
+
+    //detects "mobile" when screen is portrait & <701w OR landscape <851w - relevant to styling
+    this.isMobile = ko.observable((function() {
+        if ((window.innerHeight > window.innerWidth && window.innerWidth < 701) ||
+            (window.innerHeight < window.innerWidth && window.innerWidth < 851)) {
+            return true;
+        } else {
+            return false;
+        }
+    })());
     //reference point for ordering each search list
     this.newOrder = 0;
     //highest value in current order
     this.topOrder = 0;
     //range refers to start position in the chosen item group
     this.rangeStart = 0;
-
+    //range in display depends on screen styling (for mobile or desktop screen)
     this.range = (function() {
-        if (window.innerWidth < 700) {
+        if (self.isMobile() === true) {
             return 5;
         } else {
             return 20;
@@ -49,15 +99,6 @@ var ViewModel = function() {
     })();
 
     this.infowindow = new google.maps.InfoWindow();
-
-    this.isMobile = ko.observable((function() {
-        if (window.innerWidth < 700) {
-            return true;
-            self.range = 3;
-        } else {
-            return false;
-        }
-    })());
 
     //Create a KO array with all main five categories
     this.category = ko.observableArray(['Live performance', 'Motion pictures', 'Radio', 'Recording', 'Television']);
@@ -178,10 +219,8 @@ var ViewModel = function() {
      */
     this.starSetter = function(walkOfFameListItem) {
         var iconSize;
-        //measures the current size of the screen window
-        var windowWidth = window.innerWidth;
-        //And based on the width, it decides between the mobil or regular size
-        if (windowWidth < 701) {
+        //Mobil checker for icon size
+        if (self.isMobile() === true) {
             iconSize = "image/mobilstar.png";
         } else {
             iconSize = "image/smallstar.png";
@@ -225,11 +264,10 @@ var ViewModel = function() {
      * chosen star.
      */
     this.chooseStar = function(walkOfFameListItem) {
-        var windowWidth = window.innerWidth;
         //change highlighted icon to normal icon for outgoing current star
         var outgoingIcon;
         //size checker
-        if (windowWidth < 701) {
+        if (self.isMobile() === true) {
             outgoingIcon = "image/mobilstar.png";
         } else {
             outgoingIcon = "image/smallstar.png";
@@ -244,7 +282,7 @@ var ViewModel = function() {
         //now select the highlighted "activated" icon
         var activeIcon;
 
-        if (windowWidth < 701) {
+        if (self.isMobile() === true) {
             activeIcon = "image/mobilstarActivated.png";
         } else {
             activeIcon = "image/smallstarActivated.png";
@@ -356,6 +394,7 @@ var ViewModel = function() {
             });
         }
     };
+
     //Launch query on "CC" to demo the app at first load.
     self.query("Charlie Chaplin");
 };
