@@ -15,8 +15,13 @@ var ViewModel = function() {
         //KO observable that determines whether a star "shows" on the list or not,
         //which is calculated by whether or not an item is in display range && in chosen result
         this.show = ko.observable(false);
-        //A placekeeper for attaching the map marker
-        this.marker = null;
+        //Attaches a map marker, but map, position & icon TBD when fed to "starSetter" function
+        this.marker = new google.maps.Marker({
+            map: null,
+            animation: google.maps.Animation.DROP,
+            position: null,
+            icon: null
+        });
         //categoryVisible determines if category is displayed with fullName in list items
         this.categoryVisible = ko.observable(false);
         //marks if a starObject is a "multiple" with other stars with same name but different category.
@@ -47,14 +52,14 @@ var ViewModel = function() {
     };
     //variable to use for resize function
     var $window = $(window);
-    //resize function checks for mobil, chooses the correct icon size, it also reevalutes list range
+    //resize function checks for mobil, chooses the correct icon size, it also reevalutes list range & recenters map
     $window.resize(function() {
         self.isMobile(self.resizeMobileCalculator());
         self.range = (function() {
             if (self.isMobile() === true) {
                 return 5;
             } else {
-                return 20;
+                return 15;
             }
         })();
         self.walkOfFameList().forEach(function(star) {
@@ -71,7 +76,27 @@ var ViewModel = function() {
                 self.showRangeEvaluator(star);
             }
         });
-
+        //recenter map
+        var windowWidth = window.innerWidth;
+        var zoomLevel = 15;
+        var mapLat = 34.1;
+        var mapLng = -118.332;
+        //changes zoom level for smaller screens
+        if (self.isMobile() === true) {
+            zoomLevel = 14;
+        } else {
+            //calculates a re-centering of the map based on screen size
+            var percentFromIdeal = (100 - windowWidth / 1300 * 100);
+            var centerLngOffset = 0.00021604 * percentFromIdeal;
+            mapLng = mapLng + centerLngOffset;
+            if (windowWidth < 1000) {
+                zoomLevel = 14;
+            }
+        }
+        map.setCenter({
+            lat: mapLat,
+            lng: mapLng
+        })
     });
 
     //detects "mobile" when screen is portrait & <701w OR landscape <851w - relevant to styling
@@ -94,7 +119,7 @@ var ViewModel = function() {
         if (self.isMobile() === true) {
             return 5;
         } else {
-            return 20;
+            return 15;
         }
     })();
 
@@ -150,6 +175,7 @@ var ViewModel = function() {
                     star.categoryVisible(false);
                 }
             };
+
             setCategoryVisible(star);
             self.starSetter(star);
         } else {
@@ -213,27 +239,13 @@ var ViewModel = function() {
         });
     };
 
-    /* A function that makes the marker, attaches it to a star object. It looks up latlng for a marker,
+    /* For stars that are set "show() === true", a function that looks latlng for a marker,
      * and feeds that position to the marker, and adds it to the map.
      * Also makes the marker clickable with the chooseStar function.
      */
     this.starSetter = function(walkOfFameListItem) {
-        var iconSize;
-        //Mobil checker for icon size
-        if (self.isMobile() === true) {
-            iconSize = "image/mobilstar.png";
-        } else {
-            iconSize = "image/smallstar.png";
-        }
-        //checks to see if marker has previously been made; if "null", makes marker, geocodes, and places on map
-        if (walkOfFameListItem.marker === null) {
-            walkOfFameListItem.marker = new google.maps.Marker({
-                map: map,
-                animation: google.maps.Animation.DROP,
-                position: null,
-                icon: iconSize
-            });
-
+        //checks if marker already has geocode position; if "null", geocodes, and places on map
+        if (walkOfFameListItem.marker.getPosition() === null) {
             var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
             $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
                 null,
@@ -248,12 +260,34 @@ var ViewModel = function() {
                         });
                         //makes sure item is still "show" when the marker geocode returns
                         if (walkOfFameListItem.show() === true) {
+                            //Mobil checker for icon size
+                            var iconSize;
+                            if (self.isMobile() === true) {
+                                iconSize = "image/mobilstar.png";
+                            } else {
+                                iconSize = "image/smallstar.png";
+                            }
+                            walkOfFameListItem.marker.setIcon(iconSize);
                             walkOfFameListItem.marker.setMap(map);
+                        }
+                    } else if (data.status === "OVER_QUERY_LIMIT") {
+                        //if Google geocode hits a query limit, check to see if item is still
+                        //needed on map; if so: repeat the geocode & map set
+                        if (walkOfFameListItem.show() === true) {
+                            self.starSetter(walkOfFameListItem);
                         }
                     }
                 });
         } else {
-            //used when a marker has previously been made, geocoded, and removed from map; puts it back on map
+            //used when a marker has prior geocod position, but been removed from map; puts it back on map
+            //Mobil checker for icon size
+            var iconSize;
+            if (self.isMobile() === true) {
+                iconSize = "image/mobilstar.png";
+            } else {
+                iconSize = "image/smallstar.png";
+            }
+            walkOfFameListItem.marker.setIcon(iconSize);
             walkOfFameListItem.marker.setMap(map);
         }
     };
@@ -368,8 +402,8 @@ var ViewModel = function() {
         });
     };
 
-    /* Adds 20 to range start position and updates the list advancing through the
-     * next 20 names using range evaluator. (Also checks to see if list is advanced
+    /* Adds the range start position and updates the list advancing through the
+     * next 15 names using range evaluator. (Also checks to see if list is advanced
      * past top of list. If so, it doesn't change the rangeStart)
      */
     this.nextRange = function() {

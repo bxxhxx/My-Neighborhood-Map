@@ -132,7 +132,7 @@ var sortTheData = function(wikiItems) {
                     newObjectSourceArray[j] = "6915 Hollywood Blvd.";
                 }
                 //Fix anomolous formatting in Wikipedia
-                newObjectSourceArray[j] = newObjectSourceArray[j].replace("Special Plaque", "");
+                newObjectSourceArray[j] = newObjectSourceArray[j].replace("Special Plaque<br />", "");
                 //Fix anomolous formatting in Wikipedia
                 cutPosition = 0;
                 cutPosition = newObjectSourceArray[j].indexOf("|}");
