@@ -1,3 +1,5 @@
+'use strict';
+
 /* This page is for the initial gathering and sorting of a complicated data set from Wikipedia.
  * as well as the initialization of the map. It is essentially seperate from the app function.
  * For purposes of keeping the code more clear and organized, I decided to keep it on its own page.
@@ -6,6 +8,7 @@
 //An array to store the sorted, cleaned data from Wikipedia
 var completeStarDataModel = [];
 
+var map;
 //Initializes the map
 var startMap = function() {
     var windowWidth = window.innerWidth;
@@ -13,7 +16,8 @@ var startMap = function() {
     var mapLat = 34.1;
     var mapLng = -118.332;
     //changes zoom level for smaller screens
-    if (windowWidth < 701) {
+    if ((window.innerHeight > window.innerWidth && window.innerWidth < 701) ||
+        (window.innerHeight < window.innerWidth && window.innerWidth < 851)) {
         zoomLevel = 14;
     } else {
         //calculates a re-centering of the map based on screen size
@@ -38,13 +42,12 @@ var startMap = function() {
         streetViewControl: false,
         mapTypeControl: false
     });
-    //attach map as global variable to document
-    document.map = map;
 };
 
 //This function sorts the data coming from Wikipedia (ajax request)
 var sortTheData = function(wikiItems) {
     //helper function used to determine if object is empty
+    // use of conditional statement "if" observes Udacity advice re: "for-in" loops
     var isEmpty = function(obj) {
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop))
@@ -58,7 +61,7 @@ var sortTheData = function(wikiItems) {
     var rawDataArray = response.split("| [[");
     //This for loop will restructure each data string in rawDataArray into
     //a more coherent data object. It  skips item [0] which was header information
-    for (var i = 1; i < rawDataArray.length; i++) {
+    for (var i = 1, len = rawDataArray.length; i < len; i++) {
         //newObject will receive the new sifted data object from the string
         var newObject = {};
         //Using replace function to get rid off extraneous characters
@@ -176,8 +179,14 @@ var sortTheData = function(wikiItems) {
  * When "Done," it sorts the Wiki data, then starts the ViewModel via ko.applybindings.
  * When "Fail", it uses data from the default-hardcoded-data.js, and starts ViewModel.
  */
-var init = function() {
+var initMap = function() {
     startMap();
+    //error handler for initial Wikip star list search
+    var wikiRequestTimeout = setTimeout(function() {
+        var elem = document.getElementById("topSection");
+        elem.innerHTML = '<p class="error">Wikipedia API Unavailable<br/>to show star list!!</p>';
+    }, 8000);
+
     $.ajax({
             url: "https://en.wikipedia.org/w/api.php",
             data: {
@@ -193,13 +202,38 @@ var init = function() {
             var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
             sortTheData(wikiItems);
             //Removes a class that hides duplicate html that will immediately be switched by KO
-            $(".list").removeClass('hideFirst');
+            $(".listContainerBlock__list").removeClass('hideFirst');
             ko.applyBindings(new ViewModel());
+            //clearTimeout on successful response
+            clearTimeout(wikiRequestTimeout);
 
         })
         //Error handling for wikipedia api fail then uses a default hardcoded data set
         .fail(function() {
             completeStarDataModel = defaultCompleteStarDataModel;
+            $(".listContainerBlock__list").removeClass('hideFirst');
             ko.applyBindings(new ViewModel());
+            //clearTimeout on default/backup use of hardcoded data set
+            clearTimeout(wikiRequestTimeout);
         });
+};
+
+
+//Creates message if Google Maps API "onerror" is activated
+var errorHandling = function() {
+    //checks to see if body has been created prior to "onerror" - if not, creates
+    if (!document.body) {
+        var body = document.createElement("body");
+        document.documentElement.appendChild(body);
+        console.log("created body");
+    }
+    //empties body
+    document.body.innerHTML = '';
+    //create error message in "p" element
+    var elem = document.createElement("p");
+    var content = document.createTextNode("Google Map API Unavailable!");
+    elem.appendChild(content);
+    //attach error message to body
+    document.body.appendChild(elem);
+    $("p").addClass('error');
 };

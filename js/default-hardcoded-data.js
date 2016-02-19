@@ -201,8 +201,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3376545]
 }, {
     "fullName": "Adrienne Ames",
-    "category": ["Motion pictures", "Kim Amidon & Mark Wallengren"],
-    "address": ["1612 Vine Street", "colspan=\"2\" | ''see [[#Wallengreen|Mark Wallengren & Kim Amidon]]"],
+    "category": ["Motion pictures"],
+    "address": ["1612 Vine Street"],
     "lat": [34.1000307, 99],
     "lng": [-118.3266479, 99]
 }, {
@@ -213,8 +213,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.339437]
 }, {
     "fullName": "Broncho Billy Anderson",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["1651 Vine Street", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["1651 Vine Street"],
     "lat": [34.1007874, 34.0522342],
     "lng": [-118.3266861, -118.2436849]
 }, {
@@ -363,8 +363,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3368433]
 }, {
     "fullName": "Jean Arthur",
-    "category": ["Motion pictures", "Robert Arthur & Ken Minyard"],
-    "address": ["6333 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Minyard|Ken Minyard & Robert Arthur]]"],
+    "category": ["Motion pictures"],
+    "address": ["6333 Hollywood Blvd."],
     "lat": [34.10164, 99],
     "lng": [-118.3280376, 99]
 }, {
@@ -579,8 +579,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.339741]
 }, {
     "fullName": "Bob Barker",
-    "category": ["Television", "Roger Barkley & Al Lohman"],
-    "address": ["6714 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Lohman|Al Lohman & Roger Barkley]]''"],
+    "category": ["Television"],
+    "address": ["6714 Hollywood Blvd."],
     "lat": [34.101331, 99],
     "lng": [-118.3367158, 99]
 }, {
@@ -1017,8 +1017,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266855]
 }, {
     "fullName": "Carlyle Blackwell",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6340 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6340 Hollywood Blvd."],
     "lat": [34.1011809, 34.0522342],
     "lng": [-118.327933, -118.2436849]
 }, {
@@ -1617,8 +1617,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [99]
 }, {
     "fullName": "Spring Byington",
-    "category": ["Motion pictures", "Television", "}\n{{col-end}}\n\n==C==\n{{col-begin}}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6507 Hollywood Blvd.", "6231 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures", "Television"],
+    "address": ["6507 Hollywood Blvd.", "6231 Hollywood Blvd."],
     "lat": [34.1018498, 34.1018794, 34.0522342],
     "lng": [-118.331339, -118.3254546, -118.2436849]
 }, {
@@ -2030,7 +2030,7 @@ var defaultCompleteStarDataModel = [{
     "lat": [34.102001],
     "lng": [-118.325867]
 }, {
-    "fullName": "Charlie Chaplin",
+    "fullName": "Charlie Chaplinz",
     "category": ["Motion pictures"],
     "address": ["6751 Hollywood Blvd."],
     "lat": [34.1017702],
@@ -2223,8 +2223,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3254654]
 }, {
     "fullName": "Steve Cochran",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["1750 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["1750 Hollywood Blvd."],
     "lat": [34.0961205, 34.0522342],
     "lng": [-118.2903527, -118.2436849]
 }, {
@@ -2462,7 +2462,7 @@ var defaultCompleteStarDataModel = [{
     "lat": [34.10356],
     "lng": [-118.3271577]
 }, {
-    "fullName": "Merian C. Cooper{{refn|group=note|Merian Cooper's star is misspelled as \"Meriam\".",
+    "fullName": "Merian C. Cooper",
     "category": ["Motion pictures"],
     "address": ["6525 Hollywood Blvd."],
     "lat": [34.1017883],
@@ -2799,8 +2799,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3347076]
 }, {
     "fullName": "John Cusack",
-    "category": ["Motion pictures", "}\n{{col-end}}\n\n==D==\n{{col-begin}}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6644 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6644 Hollywood Blvd."],
     "lat": [34.1013045, 34.0522342],
     "lng": [-118.3347464, -118.2436849]
 }, {
@@ -3177,8 +3177,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.326343]
 }, {
     "fullName": "Andy Devine",
-    "category": ["Radio", "Television", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6258 Hollywood Blvd.", "6366 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Radio", "Television"],
+    "address": ["6258 Hollywood Blvd."],
     "lat": [34.1016254, 34.1013313, 34.0522342],
     "lng": [-118.3255205, -118.3287303, -118.2436849]
 }, {
@@ -3681,8 +3681,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3323438]
 }, {
     "fullName": "Mischa Elman",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["1560 Vine Street", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["1560 Vine Street"],
     "lat": [34.0993898, 34.0522342],
     "lng": [-118.3266473, -118.2436849]
 }, {
@@ -3753,8 +3753,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3331745]
 }, {
     "fullName": "Bob Eubanks",
-    "category": ["Television", "Evans & Livingston"],
-    "address": ["6712 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Livingston|Livingston & Evans]]''"],
+    "category": ["Television"],
+    "address": ["6712 Hollywood Blvd."],
     "lat": [34.1014167, 99],
     "lng": [-118.3365429, 99]
 }, {
@@ -4107,8 +4107,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266857]
 }, {
     "fullName": "Kirsten Flagstad",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6777 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["6777 Hollywood Blvd."],
     "lat": [34.1018431, 34.0522342],
     "lng": [-118.3384573, -118.2436849]
 }, {
@@ -4215,8 +4215,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3399805]
 }, {
     "fullName": "John Ford",
-    "category": ["Motion pictures", "Mary Ford and Les Paul"],
-    "address": ["1640 Vine Street", "colspan=\"2\" | ''see [[#Paul|Les Paul & Mary Ford]]''"],
+    "category": ["Motion pictures"],
+    "address": ["1640 Vine Street"],
     "lat": [34.1004125, 99],
     "lng": [-118.3266479, 99]
 }, {
@@ -4731,8 +4731,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3247812]
 }, {
     "fullName": "Godzilla",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6925 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures", ],
+    "address": ["6925 Hollywood Blvd."],
     "lat": [34.101765, 34.0522342],
     "lng": [-118.3408824, -118.2436849]
 }, {
@@ -5541,8 +5541,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266858, -118.3342929]
 }, {
     "fullName": "Jascha Heifetz",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6777 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["6777 Hollywood Blvd."],
     "lat": [34.1018431, 34.0522342],
     "lng": [-118.3384573, -118.2436849]
 }, {
@@ -6219,8 +6219,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3416128]
 }, {
     "fullName": "Billy Joel",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style= \"font-size: 100%;\""],
-    "address": ["6233 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["6233 Hollywood Blvd."],
     "lat": [34.102001, 34.0522342],
     "lng": [-118.325867, -118.2436849]
 }, {
@@ -6579,8 +6579,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.334269]
 }, {
     "fullName": "Nicole Kidman",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6801 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6801 Hollywood Blvd."],
     "lat": [34.1026077, 34.0522342],
     "lng": [-118.3399805, -118.2436849]
 }, {
@@ -7269,8 +7269,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3388152]
 }, {
     "fullName": "Oscar Levant",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style= \"font-size: 100%\""],
-    "address": ["6728 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["6728 Hollywood Blvd."],
     "lat": [34.1015454, 34.0522342],
     "lng": [-118.337063, -118.2436849]
 }, {
@@ -7616,7 +7616,7 @@ var defaultCompleteStarDataModel = [{
     "lat": [34.1012777],
     "lng": [-118.3416128]
 }, {
-    "fullName": "Auguste and Louis Lumière|Auguste Lumière{{refn|group=note|Auguste Lumière star misspelled as \"August\".",
+    "fullName": "Auguste and Louis Lumière",
     "category": ["Motion pictures"],
     "address": ["6320 Hollywood Blvd."],
     "lat": [34.1012895],
@@ -7965,8 +7965,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3427565]
 }, {
     "fullName": "Dean Martin",
-    "category": ["Motion pictures", "Recording", "Television", "Dick Martin and Dan Rowan"],
-    "address": ["6519 Hollywood Blvd.", "1617 Vine Street", "6651 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Rowan|Dan Rowan and Dick Martin]]''"],
+    "category": ["Motion pictures", "Recording", "Television"],
+    "address": ["6519 Hollywood Blvd.", "1617 Vine Street", "6651 Hollywood Blvd."],
     "lat": [34.1017356, 34.1001043, 34.1015937, 99],
     "lng": [-118.3316851, -118.326685, -118.3349696, 99]
 }, {
@@ -8217,8 +8217,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3421778]
 }, {
     "fullName": "George McFarland ",
-    "category": ["Motion pictures ", "''Fibber McGee and Molly ''"],
-    "address": ["7095 Hollywood Blvd.", "colspan = \"2\" | ''see [[#Fibber|Fibber McGee and Molly]]''"],
+    "category": ["Motion pictures "],
+    "address": ["7095 Hollywood Blvd."],
     "lat": [34.1019346, 99],
     "lng": [-118.3449957, 99]
 }, {
@@ -8289,8 +8289,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.339741]
 }, {
     "fullName": "Audrey Meadows",
-    "category": ["Television", "Anne Meara and Jerry Stiller"],
-    "address": ["6100 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Stiller|Jerry Stiller and Anne Meara]]''"],
+    "category": ["Television"],
+    "address": ["6100 Hollywood Blvd."],
     "lat": [34.1016341, 99],
     "lng": [-118.3223743, 99]
 }, {
@@ -8307,8 +8307,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266713]
 }, {
     "fullName": "George Meeker",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6101 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6101 Hollywood Blvd."],
     "lat": [34.1016811, 34.0522342],
     "lng": [-118.322376, -118.2436849]
 }, {
@@ -9063,8 +9063,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3367158]
 }, {
     "fullName": "New Kids on the Block",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["7072 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["7072 Hollywood Blvd."],
     "lat": [34.1015291, 34.0522342],
     "lng": [-118.3440879, -118.2436849]
 }, {
@@ -9279,8 +9279,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.33589]
 }, {
     "fullName": "George O'Hanlon",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6428 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6428 Hollywood Blvd."],
     "lat": [34.1015889, 34.0522342],
     "lng": [-118.3302504, -118.2436849]
 }, {
@@ -9609,8 +9609,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.327134]
 }, {
     "fullName": "William Petersen",
-    "category": ["Television", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6667 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Television"],
+    "address": ["6667 Hollywood Blvd."],
     "lat": [34.1018304, 34.0522342],
     "lng": [-118.3354085, -118.2436849]
 }, {
@@ -10215,8 +10215,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3345231]
 }, {
     "fullName": "The Ritz Brothers",
-    "category": ["Motion pictures", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6756 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Motion pictures"],
+    "address": ["6756 Hollywood Blvd."],
     "lat": [34.1013382, 34.0522342],
     "lng": [-118.3378074, -118.2436849]
 }, {
@@ -11073,8 +11073,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3416128]
 }, {
     "fullName": "Joe Smith (music manager)",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["1750 N. Vine Street", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["1750 N. Vine Street"],
     "lat": [34.1031131, 34.0522342],
     "lng": [-118.326343, -118.2436849]
 }, {
@@ -11415,8 +11415,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3259214]
 }, {
     "fullName": "Dean Stockwell",
-    "category": ["Motion pictures", "Mike Stoller and Jerry Leiber"],
-    "address": ["7000 Hollywood Blvd.", "colspan=\"2\" | ''see [[#Leiber|Jerry Leiber and Mike Stoller]]''"],
+    "category": ["Motion pictures"],
+    "address": ["7000 Hollywood Blvd."],
     "lat": [34.1012777, 99],
     "lng": [-118.3416128, 99]
 }, {
@@ -11871,8 +11871,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266473]
 }, {
     "fullName": "Lawrence Tibbett",
-    "category": ["Recording", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6325 Hollywood Blvd.", "! Name !! Category !! Address"],
+    "category": ["Recording"],
+    "address": ["6325 Hollywood Blvd."],
     "lat": [34.102022, 34.0522342],
     "lng": [-118.3275281, -118.2436849]
 }, {
@@ -12224,7 +12224,7 @@ var defaultCompleteStarDataModel = [{
     "lat": [34.10156],
     "lng": [-118.3390548]
 }, {
-    "fullName": "Victoria's Secret#Victoria's Secret Angels",
+    "fullName": "Victoria's Secret",
     "category": ["Special"],
     "address": ["6800 Hollywood Blvd."],
     "lat": [34.1012926],
@@ -12669,8 +12669,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3444009]
 }, {
     "fullName": "James Whitmore",
-    "category": ["Television", "}\n{{col-break}}\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["6611 Hollywood Blvd", "! Name !! Category !! Address"],
+    "category": ["Television"],
+    "address": ["6611 Hollywood Blvd"],
     "lat": [34.101872, 34.0522342],
     "lng": [-118.333833, -118.2436849]
 }, {
@@ -13059,8 +13059,8 @@ var defaultCompleteStarDataModel = [{
     "lng": [-118.3266841, -118.3280376, -118.3302438]
 }, {
     "fullName": "Keenan Wynn",
-    "category": ["Television", "colspan=\"3\" | No Entries\n|}\n\n==Y==\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\""],
-    "address": ["1515 Vine Street\n|}\n{{col-end}}\n\n==X==\n{| class=\"wikitable sortable\" style=\"font-size: 100%;\"", "! Name !! Category !! Address"],
+    "category": ["Television"],
+    "address": ["1515 Vine Street"],
     "lat": [34.0522342, 34.0522342],
     "lng": [-118.2436849, -118.2436849]
 }, {
@@ -13165,4 +13165,4 @@ var defaultCompleteStarDataModel = [{
     "address": ["6629 Hollywood Blvd."],
     "lat": [34.101596],
     "lng": [-118.3345009]
-}]
+}];

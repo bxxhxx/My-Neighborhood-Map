@@ -18,4 +18,4 @@ Index.html uses "minified" (.min) versions of CSS and Javascript. The standard v
 
 ## How to Open the Project
 - Live web link http://bxxhxx.github.io/My-Neighborhood-Map
-- Source files at https://github.com/bxxhxx/My-Neighborhood-Map
+- Source files at https://github.com/bxxhxx/My-Neighborhood-Map (open index.html in a web browser to start)

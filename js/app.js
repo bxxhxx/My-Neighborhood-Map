@@ -1,3 +1,4 @@
+'use strict';
 //Create knockout ViewModel function
 var ViewModel = function() {
     //Make a hook to grab the context in the lower level scope
@@ -96,7 +97,7 @@ var ViewModel = function() {
         map.setCenter({
             lat: mapLat,
             lng: mapLng
-        })
+        });
     });
 
     //detects "mobile" when screen is portrait & <701w OR landscape <851w - relevant to styling
@@ -247,9 +248,17 @@ var ViewModel = function() {
         //checks if marker already has geocode position; if "null", geocodes, and places on map
         if (walkOfFameListItem.marker.getPosition() === null) {
             var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
+            //timeout error message in case of no response from geocoder
+            var geocodeRequestTimeout = setTimeout(function() {
+                var elem = document.getElementById("topSection");
+                elem.innerHTML = '<p class="error">Error looking up locations! Try reloading.</p>';
+            }, 8000);
+            //Google geocode lookup
             $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
                 null,
                 function(data, status) {
+                    //clear timeout when Google geocode responds
+                    clearTimeout(geocodeRequestTimeout);
                     if (data.status == "OK") {
 
                         var pos = data.results[0].geometry.location;
@@ -261,13 +270,13 @@ var ViewModel = function() {
                         //makes sure item is still "show" when the marker geocode returns
                         if (walkOfFameListItem.show() === true) {
                             //Mobil checker for icon size
-                            var iconSize;
+                            var iconImage;
                             if (self.isMobile() === true) {
-                                iconSize = "image/mobilstar.png";
+                                iconImage = "image/mobilstar.png";
                             } else {
-                                iconSize = "image/smallstar.png";
+                                iconImage = "image/smallstar.png";
                             }
-                            walkOfFameListItem.marker.setIcon(iconSize);
+                            walkOfFameListItem.marker.setIcon(iconImage);
                             walkOfFameListItem.marker.setMap(map);
                         }
                     } else if (data.status === "OVER_QUERY_LIMIT") {
@@ -276,18 +285,22 @@ var ViewModel = function() {
                         if (walkOfFameListItem.show() === true) {
                             self.starSetter(walkOfFameListItem);
                         }
+                        //error message if Google Geocoder returns with any other error message
+                    } else {
+                        var elem = document.getElementById("topSection");
+                        elem.innerHTML = '<p class="error">Error looking up locations! Try reloading.<br/>Error Message: ' + data.status + '</p>';
                     }
                 });
         } else {
             //used when a marker has prior geocod position, but been removed from map; puts it back on map
             //Mobil checker for icon size
-            var iconSize;
+            var iconImage;
             if (self.isMobile() === true) {
-                iconSize = "image/mobilstar.png";
+                iconImage = "image/mobilstar.png";
             } else {
-                iconSize = "image/smallstar.png";
+                iconImage = "image/smallstar.png";
             }
-            walkOfFameListItem.marker.setIcon(iconSize);
+            walkOfFameListItem.marker.setIcon(iconImage);
             walkOfFameListItem.marker.setMap(map);
         }
     };
@@ -343,6 +356,22 @@ var ViewModel = function() {
         var wikiUrl = "https://en.wikipedia.org/w/api.php";
         var fullName = walkOfFameListItem.fullName();
         var address = walkOfFameListItem.address;
+
+        //error handler for  Wikip star link search
+        var wikiInfoLinkRequestTimeout = setTimeout(function() {
+            console.log("timeout");
+            var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
+                '<p>' + address + '</p>' +
+                //error message
+                '<p class="error">Wikipedia link unavailable - please try again later!</p></div>';
+            //Inject the content to info window
+            self.infowindow.setContent(windowContent);
+            //Opens the info window on the chosen item
+            self.infowindow.open(map, walkOfFameListItem.marker);
+            self.toggleBounce(walkOfFameListItem);
+
+        }, 8000);
+
         //ajax request to search fullName in wikipedia
         $.ajax({
                 url: wikiUrl,
@@ -366,6 +395,8 @@ var ViewModel = function() {
                 //Opens the info window on the chosen item
                 self.infowindow.open(map, walkOfFameListItem.marker);
                 self.toggleBounce(walkOfFameListItem);
+                //clearTimeout on successful response
+                clearTimeout(wikiInfoLinkRequestTimeout);
             })
             //If Wikipedia request fails, places error message in info box
             .fail(function() {
@@ -378,6 +409,8 @@ var ViewModel = function() {
                 //Opens the info window on the chosen item
                 self.infowindow.open(map, walkOfFameListItem.marker);
                 self.toggleBounce(walkOfFameListItem);
+                //clearTimeout on substitute response
+                clearTimeout(wikiInfoLinkRequestTimeout);
             });
     };
 
@@ -432,5 +465,3 @@ var ViewModel = function() {
     //Launch query on "CC" to demo the app at first load.
     self.query("Charlie Chaplin");
 };
-//Starts the app
-init();

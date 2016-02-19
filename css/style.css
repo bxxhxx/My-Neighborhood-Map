@@ -30,9 +30,10 @@ ul {
 
 .error {
     color: #ff0000;
+    text-align: center;
 }
 
-#panel {
+.panel {
     height: 100%;
     width: 300px;
     position: absolute;
@@ -43,23 +44,23 @@ ul {
     z-index: 1;
 }
 
-#topSection {
+.topSectionBlock {
     background-color: #3b3a33;
     border-radius: 10px;
     padding: 10px 0;
 }
 
-#search-window {
+.topSectionBlock__search-window {
     width: 300px;
     margin: 0 auto;
 }
 
-#searchForm {
+.topSectionBlock__search-window__searchForm {
     width: 100%;
     text-align: center;
 }
 
-#searchBox {
+.topSectionBlock__search-window__searchForm__searchBox {
     width: 120px;
     height: 2.5vh;
     display: inline-block;
@@ -67,7 +68,7 @@ ul {
     padding: 0 1px;
 }
 
-#clearButton {
+.topSectionBlock__search-window__searchForm__clearButton {
     display: inline-block;
     height: 2.5vh;
     border-top-width: 0;
@@ -77,7 +78,7 @@ ul {
     background-color: #ebebeb;
 }
 
-.listButton {
+.listContainerBlock__listButton {
     display: inline-block;
     height: 2.5vmax;
     border-top-width: 0;
@@ -87,10 +88,9 @@ ul {
     background-color: #ebebeb;
 }
 
-#category {
+.categoryBlock {
     background-color: #3b3a33;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
     border-radius: 10px;
     padding-top: 10px;
     float: left;
@@ -103,7 +103,7 @@ li {
     padding-bottom: 3px;
 }
 
-#category li:hover {
+.categoryBlock li:hover {
     color: #f7de50;
 }
 
@@ -112,25 +112,23 @@ li {
     font-weight: bold;
 }
 
-.list {
-    background-color: #f7de50;
-    color: #3b3a33;
-}
-
-#listContainer {
+.listContainerBlock {
     width: 100%;
     float: left;
     color: #3b3a33;
 }
 
-#listHeader {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+.listContainerBlock__list {
+    background-color: #f7de50;
+    color: #3b3a33;
 }
 
-#listGroup {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+.listContainerBlock__listHeader {
+    border-radius: 10px 10px 0 0;
+}
+
+.listContainerBlock__listGroup {
+    border-radius: 0 0 10px 10px;
 }
 
 .infoWindow {
@@ -143,6 +141,7 @@ li {
     float: left;
 }
 
+
 /*Used to hide duplicate HTML until KO is fully loaded to switch views */
 
 .hideFirst {
@@ -150,26 +149,28 @@ li {
 }
 
 @media only screen and (max-width: 700px) and (orientation: portrait) {
-    #panel {
+    .panel {
         height: 50%;
         width: 100%;
+        padding: 0;
         position: relative;
         z-index: auto;
     }
-    #topSection {
+    .topSectionBlock {
         height: 22%;
         padding-top: 0;
         padding-bottom: 2px;
         border: 2px solid;
         border-radius: 0;
+        box-sizing: border-box;
     }
-    #header {
+    .topSectionBlock__header {
         height: 50%;
     }
-    #search-window {
+    .topSectionBlock__search-window {
         height: 50%;
     }
-    #searchBox {
+    .topSectionBlock__search-window__searchForm__searchBox {
         width: 30vmax;
         height: 5vh;
         border-top-width: 2px;
@@ -178,50 +179,49 @@ li {
         padding-bottom: .5vh;
         box-sizing: border-box;
     }
-    #clearButton {
+    .topSectionBlock__search-window__searchForm__clearButton {
         height: 4vh;
         padding-top: 0;
         padding-bottom: 0;
     }
-    .listButton {
+    .listContainerBlock__listButton {
         display: block;
         padding-top: 0;
         padding-bottom: 0;
         border-width: 0;
         height: 4vh;
     }
-    #category {
+    .categoryBlock {
         height: 78%;
         width: 50%;
-        margin-top: 0;
-        margin-bottom: 0;
+        margin: 0;
         border-radius: 0;
-        padding-top: 0;
+        padding: 0;
     }
-    .list h4 {
+    .listContainerBlock__list h4 {
         color: #3b3a33;
     }
-    #listHeader {
+    .listContainerBlock__listHeader {
         border-radius: 0;
         height: 20%;
     }
-    #previous {
+    .listContainerBlock__previous {
         float: left;
     }
-    #next {
+    .listContainerBlock__next {
         float: right;
     }
-    #listGroup {
+    .listContainerBlock__listGroup {
         border-radius: 0;
         background-color: #f7de50;
     }
-    #listContainer {
+    .listContainerBlock {
         width: 50%;
         height: 78%;
         width: 50%;
         background-color: #f7de50;
     }
-    #listGroup li {
+    .listContainerBlock__listGroup li {
         color: #3b3a33;
     }
     #map {
@@ -242,11 +242,11 @@ li {
         margin: 0;
         padding-left: 2vmax;
     }
-    #category ul {
+    .categoryBlock ul {
         padding-top: 3.2vh;
     }
-    #listGroup ul {
-        padding-top: 1.5vh;
+    .listContainerBlock__listGroup ul {
+        padding-top: 2.5vh;
     }
     li {
         font-size: 2.65vh;
@@ -261,32 +261,32 @@ li {
 }
 
 @media only screen and (min-width: 450px) and (max-width: 700px) and (orientation: portrait) {
-    #panel {
+    .panel {
         height: 40%;
     }
-    #topSection {
+    .topSectionBlock {
         height: 30%;
     }
-    #search-window {
+    .topSectionBlock__search-window {
         width: 60vw;
     }
-    #searchBox {
+    .topSectionBlock__search-window__searchForm__searchBox {
         height: 4vh;
     }
-    #clearButton {
+    .topSectionBlock__search-window__searchForm__clearButton {
         height: 3.5vh;
     }
-    #category,
-    #listContainer {
+    .categoryBlock,
+    .listContainerBlock {
         height: 70%;
     }
-    #listHeader {
+    .listContainerBlock__listHeader {
         height: 25%;
     }
-    #listGroup {
+    .listContainerBlock__listGroup {
         height: 75%;
     }
-    .listButton {
+    .listContainerBlock__listButton {
         width: 8vw;
         height: 3.5vh;
     }
@@ -305,28 +305,29 @@ li {
 }
 
 @media only screen and (max-width: 850px) and (orientation: landscape) {
-    #panel {
+    .panel {
         height: 100%;
         width: 50%;
         position: absolute;
         float: right;
         padding: 0;
     }
-    #topSection {
+    .topSectionBlock {
         height: 22%;
         padding-top: 0;
         padding-bottom: 2px;
         border: 2px solid;
         border-radius: 0;
+        box-sizing: border-box;
     }
-    #header {
+    .topSectionBlock__header {
         height: 50%;
     }
-    #search-window {
+    .topSectionBlock__search-window {
         height: 50%;
         width: 100%;
     }
-    #searchBox {
+    .topSectionBlock__search-window__searchForm__searchBox {
         width: 30vmax;
         height: 7vh;
         border-top-width: 2px;
@@ -335,12 +336,12 @@ li {
         padding-bottom: .5vh;
         box-sizing: border-box;
     }
-    #clearButton {
+    .topSectionBlock__search-window__searchForm__clearButton {
         height: 6vh;
         padding-top: 0;
         padding-bottom: 0;
     }
-    .listButton {
+    .listContainerBlock__listButton {
         display: block;
         padding-top: 0;
         padding-bottom: 0;
@@ -348,49 +349,37 @@ li {
         height: 6vh;
         width: 7vw;
     }
-    #category {
+    .categoryBlock {
         height: 78%;
         width: 50%;
-        margin-top: 0;
-        margin-bottom: 0;
+        margin: 0;
         border-radius: 0;
         padding-top: 0;
     }
-    .list h4 {
+    .listContainerBlock__list h4 {
         color: #3b3a33;
     }
-    #category {
-        height: 78%;
-        width: 50%;
-        margin-top: 0;
-        margin-bottom: 0;
-        border-radius: 0;
-        padding-top: 0;
-    }
-    .list h4 {
-        color: #3b3a33;
-    }
-    #listHeader {
+    .listContainerBlock__listHeader {
         border-radius: 0;
         height: 20%;
     }
-    #previous {
+    .listContainerBlock__previous {
         float: left;
     }
-    #next {
+    .listContainerBlock__next {
         float: right;
     }
-    #listGroup {
+    .listContainerBlock__listGroup {
         border-radius: 0;
         background-color: #f7de50;
     }
-    #listContainer {
+    .listContainerBlock {
         width: 50%;
         height: 78%;
         width: 50%;
         background-color: #f7de50;
     }
-    #listGroup li {
+    .listContainerBlock__listGroup li {
         color: #3b3a33;
     }
     #map {
@@ -410,10 +399,10 @@ li {
         margin: 0;
         padding-left: 2vmax;
     }
-    #category ul {
+    .categoryBlock ul {
         padding-top: 7vh;
     }
-    #listGroup ul {
+    .listContainerBlock__listGroup ul {
         padding-top: 1.5vh;
     }
     li {
