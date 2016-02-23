@@ -10,16 +10,17 @@
     which initiates app OR invokes errorHandling function -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-    <script src="js/default-hardcoded-data.min.js"></script>
-    <script src="js/datalookup.min.js"></script>
+    <script src="js/helper.min.js"></script>
     <script src="js/app.min.js"></script>
-    <!-- Google Map Callback (success) runs the "initMap" app initialization function,
+    <!-- Google Map Callback (success) runs the "initMap" & ViewModel app initialization function,
     while  "onerror" runs "errorHandling" to place error message on screen -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_Rbe4lbe9Thsl4jdovR-J3qtWIi7yK4&callback=initMap" onerror="errorHandling()"></script>
 </head>
 
 <body>
     <div id="container">
+        <!-- This line displays error message ONLY when KO Obs "errorVisibility" is true; at load it's "false" -->
+        <p id="errorMessage" class="error" data-bind="visible: errorVisibility"><span data-bind="text: errorMessage"></span></p>
         <div id="panel" class="panel">
             <div id="topSection" class="topSectionBlock">
                 <div id="header" class="topSectionBlock__header">

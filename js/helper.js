@@ -1,51 +1,32 @@
 'use strict';
-
-/* This page is for the initial gathering and sorting of a complicated data set from Wikipedia.
- * as well as the initialization of the map. It is essentially seperate from the app function.
- * For purposes of keeping the code more clear and organized, I decided to keep it on its own page.
+/* This page is for two helper functions that are essentially seperate from the app function.
+ * For purposes of keeping the code more clear and organized, I decided to keep them on a sep page.
  */
 
-//An array to store the sorted, cleaned data from Wikipedia
-var completeStarDataModel = [];
-
-var map;
-//Initializes the map
-var startMap = function() {
-    var windowWidth = window.innerWidth;
-    var zoomLevel = 15;
-    var mapLat = 34.1;
-    var mapLng = -118.332;
-    //changes zoom level for smaller screens
-    if ((window.innerHeight > window.innerWidth && window.innerWidth < 701) ||
-        (window.innerHeight < window.innerWidth && window.innerWidth < 851)) {
-        zoomLevel = 14;
-    } else {
-        //calculates a re-centering of the map based on screen size
-        var percentFromIdeal = (100 - windowWidth / 1300 * 100);
-        var centerLngOffset = 0.00021604 * percentFromIdeal;
-        mapLng = mapLng + centerLngOffset;
-        if (windowWidth < 1000) {
-            zoomLevel = 14;
-        }
+/* Creates message ONLY IF Google Maps API fails & callback "InitMap" can't start the ViewModel app,
+ * SO "onerror" function is called. ALL OTHER ERROR MESSAGES ARE GENERATED IN THE VIEWMODEL
+ */
+var errorHandling = function() {
+    //checks to see if body has been created prior to "onerror" - if not, creates
+    if (!document.body) {
+        var body = document.createElement("body");
+        document.documentElement.appendChild(body);
     }
-    //start the map
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-            lat: mapLat,
-            lng: mapLng
-        },
-        zoom: zoomLevel,
-        zoomControl: true,
-        zoomControlOptions: {
-            position: google.maps.ControlPosition.LEFT_BOTTOM
-        },
-        streetViewControl: false,
-        mapTypeControl: false
-    });
+    //empties body
+    document.body.innerHTML = '';
+    //create error message in "p" element
+    var elem = document.createElement("p");
+    var content = document.createTextNode("Google Map API Unavailable! - App can't run!");
+    elem.appendChild(content);
+    //attach error message to body
+    document.body.appendChild(elem);
+    $("p").addClass('error');
 };
 
-//This function sorts the data coming from Wikipedia (ajax request)
+//This one-time use helper function sorts the data coming from Wikipedia (used by ajax request in KO ViewModel)
 var sortTheData = function(wikiItems) {
+    //An array to store the sorted, cleaned data from Wikipedia
+    window.completeStarDataModel = [];
     //helper function used to determine if object is empty
     // use of conditional statement "if" observes Udacity advice re: "for-in" loops
     var isEmpty = function(obj) {
@@ -172,68 +153,4 @@ var sortTheData = function(wikiItems) {
             completeStarDataModel.push(newObject);
         }
     }
-};
-
-/*Init function is ajax request with specific parameters requested by Wikipedia's API in
- *order to get the full information from the walk of fame list page.
- * When "Done," it sorts the Wiki data, then starts the ViewModel via ko.applybindings.
- * When "Fail", it uses data from the default-hardcoded-data.js, and starts ViewModel.
- */
-var initMap = function() {
-    startMap();
-    //error handler for initial Wikip star list search
-    var wikiRequestTimeout = setTimeout(function() {
-        var elem = document.getElementById("topSection");
-        elem.innerHTML = '<p class="error">Wikipedia API Unavailable<br/>to show star list!!</p>';
-    }, 8000);
-
-    $.ajax({
-            url: "https://en.wikipedia.org/w/api.php",
-            data: {
-                action: "query",
-                prop: "revisions",
-                format: "json",
-                rvprop: "content",
-                pageids: "1310953"
-            },
-            dataType: "jsonp"
-        }).done(function(response) {
-            //Puts the response json into a variable and then runs a sorting function
-            var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
-            sortTheData(wikiItems);
-            //Removes a class that hides duplicate html that will immediately be switched by KO
-            $(".listContainerBlock__list").removeClass('hideFirst');
-            ko.applyBindings(new ViewModel());
-            //clearTimeout on successful response
-            clearTimeout(wikiRequestTimeout);
-
-        })
-        //Error handling for wikipedia api fail then uses a default hardcoded data set
-        .fail(function() {
-            completeStarDataModel = defaultCompleteStarDataModel;
-            $(".listContainerBlock__list").removeClass('hideFirst');
-            ko.applyBindings(new ViewModel());
-            //clearTimeout on default/backup use of hardcoded data set
-            clearTimeout(wikiRequestTimeout);
-        });
-};
-
-
-//Creates message if Google Maps API "onerror" is activated
-var errorHandling = function() {
-    //checks to see if body has been created prior to "onerror" - if not, creates
-    if (!document.body) {
-        var body = document.createElement("body");
-        document.documentElement.appendChild(body);
-        console.log("created body");
-    }
-    //empties body
-    document.body.innerHTML = '';
-    //create error message in "p" element
-    var elem = document.createElement("p");
-    var content = document.createTextNode("Google Map API Unavailable!");
-    elem.appendChild(content);
-    //attach error message to body
-    document.body.appendChild(elem);
-    $("p").addClass('error');
 };

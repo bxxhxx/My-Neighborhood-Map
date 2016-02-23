@@ -1,8 +1,86 @@
 'use strict';
-//Create knockout ViewModel function
+
+//Knockout ViewModel function
 var ViewModel = function() {
     //Make a hook to grab the context in the lower level scope
     var self = this;
+
+    //Initializes the map
+    this.startMap = function() {
+        var windowWidth = window.innerWidth;
+        var zoomLevel = 15;
+        var mapLat = 34.1;
+        var mapLng = -118.332;
+        //changes zoom level for smaller screens
+        if ((window.innerHeight > window.innerWidth && window.innerWidth < 701) ||
+            (window.innerHeight < window.innerWidth && window.innerWidth < 851)) {
+            zoomLevel = 14;
+        } else {
+            //calculates a re-centering of the map based on screen size
+            var percentFromIdeal = (100 - windowWidth / 1300 * 100);
+            var centerLngOffset = 0.00021604 * percentFromIdeal;
+            mapLng = mapLng + centerLngOffset;
+            if (windowWidth < 1000) {
+                zoomLevel = 14;
+            }
+        }
+        //start the map
+        window.map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: mapLat,
+                lng: mapLng
+            },
+            zoom: zoomLevel,
+            zoomControl: true,
+            zoomControlOptions: {
+                position: google.maps.ControlPosition.LEFT_BOTTOM
+            },
+            streetViewControl: false,
+            mapTypeControl: false
+        });
+    };
+
+    this.dataRequest = function() {
+        //Starts the google map API
+        self.startMap();
+
+        var wikiRequestTimeout = setTimeout(function() {
+            self.errorVisibility(true);
+            self.errorMessage("Error: Wikipedia request timeout!");
+        }, 8000);
+        //Initial request to wikipedia for raw data
+        $.ajax({
+                url: "https://en.wikipedia.org/w/api.php",
+                data: {
+                    action: "query",
+                    prop: "revisions",
+                    format: "json",
+                    rvprop: "content",
+                    pageids: "1310953"
+                },
+                dataType: "jsonp"
+            }).done(function(response) {
+                //clearTimeout on successful response
+                clearTimeout(wikiRequestTimeout);
+                //Puts the response json into a variable and then runs a sorting function
+                var wikiItems = response.query.pages["1310953"].revisions[0]["*"];
+
+                sortTheData(wikiItems);
+                //run a function to format data items in KO obs array for use in view model
+                self.walkOfFameListMaker();
+                //Removes a class that hides duplicate html that will immediately be switched by KO
+                $(".listContainerBlock__list").removeClass('hideFirst');
+                //Launch query on "CC" to demo the app at first load.
+                self.query("Charlie Chaplin");
+            })
+            //Error handling for wikipedia api fail then uses a default hardcoded data set
+            .fail(function() {
+                //clearTimeout and instead display ajax fail error
+                clearTimeout(wikiRequestTimeout);
+                self.errorVisibility(true);
+                self.errorMessage("Error: Wikipedia request failure!");
+            });
+    };
 
     //Make Star prototype with the following specific parameters
     this.Star = function(starObject) {
@@ -18,10 +96,12 @@ var ViewModel = function() {
         this.show = ko.observable(false);
         //Attaches a map marker, but map, position & icon TBD when fed to "starSetter" function
         this.marker = new google.maps.Marker({
-            map: null,
+            //map: null,
+            map: map,
             animation: google.maps.Animation.DROP,
             position: null,
-            icon: null
+            icon: null,
+            visible: false
         });
         //categoryVisible determines if category is displayed with fullName in list items
         this.categoryVisible = ko.observable(false);
@@ -30,8 +110,13 @@ var ViewModel = function() {
         this.multiple = starObject.multiple;
     };
 
+    this.errorVisibility = ko.observable(false);
+
+    this.errorMessage = ko.observable("");
     //Create a KO observable array for the data set; used with databind for list
-    this.walkOfFameList = ko.observableArray([]);
+    this.walkOfFameList = ko.observableArray([])
+        //delays KO changes to HTML until walkOfFameList has completed full load (reduces CPU overhead/time)
+        .extend({ rateLimit: { method: "notifyWhenChangesStop", timeout: 100 } });
     //Create a KO observable that uses a data bind to search input box
     this.query = ko.observable("");
     //An observable that captures whatever category is clicked and triggers
@@ -133,35 +218,38 @@ var ViewModel = function() {
      * star objects based on how many categories the named star has. Then each of these new
      * star objects are pushed into walkOfFameList, a KO obeservable array.
      */
-    completeStarDataModel.forEach(function(starItem) {
-        var starName = starItem.fullName;
-        var isStarMultiple = function(starItem) {
-            if (starItem.category.length > 1) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        var starMultiple = isStarMultiple(starItem);
-        for (var i = 0; i < starItem.category.length; i++) {
-            var starCategory = starItem.category[i];
-
-            var starAddress = starItem.address[i];
-            var starObject = {
-                fullName: starName,
-                category: starCategory,
-                address: starAddress,
-                multiple: starMultiple
+    this.walkOfFameListMaker = function() {
+        completeStarDataModel.forEach(function(starItem) {
+            var starName = starItem.fullName;
+            var isStarMultiple = function(starItem) {
+                if (starItem.category.length > 1) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
-            self.walkOfFameList.push(new self.Star(starObject));
-        }
-    });
+
+            var starMultiple = isStarMultiple(starItem);
+            for (var i = 0; i < starItem.category.length; i++) {
+                var starCategory = starItem.category[i];
+
+                var starAddress = starItem.address[i];
+                var starObject = {
+                    fullName: starName,
+                    category: starCategory,
+                    address: starAddress,
+                    multiple: starMultiple
+                };
+                self.walkOfFameList.push(new self.Star(starObject));
+            }
+        });
+    };
 
     /* A function that determines whether a star's order number is within the current range.
      * And if so, sets its "show" value to true and puts a marker on the map via starSetter.
      */
     this.showRangeEvaluator = function(star) {
+        //self.infoWindow.close();
         if ((star.order >= self.rangeStart) &&
             (star.order < (self.rangeStart + self.range))) {
             star.show(true);
@@ -187,8 +275,9 @@ var ViewModel = function() {
 
     //A function that removes a marker from the map and ensures no name shows on the current list
     this.starClear = function(star) {
+        self.infowindow.close();
         if (star.marker !== null) {
-            star.marker.setMap(null);
+            star.marker.setVisible(false);
         }
         star.show(false);
     };
@@ -250,8 +339,8 @@ var ViewModel = function() {
             var addressString = walkOfFameListItem.address + ",+Los+Angeles,+CA";
             //timeout error message in case of no response from geocoder
             var geocodeRequestTimeout = setTimeout(function() {
-                var elem = document.getElementById("topSection");
-                elem.innerHTML = '<p class="error">Error looking up locations! Try reloading.</p>';
+                self.errorVisibility(true);
+                self.errorMessage("Error: geocode request timeout! Markers Unavailable!");
             }, 8000);
             //Google geocode lookup
             $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + addressString + ",+Los+Angeles,+CA",
@@ -277,7 +366,8 @@ var ViewModel = function() {
                                 iconImage = "image/smallstar.png";
                             }
                             walkOfFameListItem.marker.setIcon(iconImage);
-                            walkOfFameListItem.marker.setMap(map);
+                            walkOfFameListItem.marker.setVisible(true);
+
                         }
                     } else if (data.status === "OVER_QUERY_LIMIT") {
                         //if Google geocode hits a query limit, check to see if item is still
@@ -287,8 +377,8 @@ var ViewModel = function() {
                         }
                         //error message if Google Geocoder returns with any other error message
                     } else {
-                        var elem = document.getElementById("topSection");
-                        elem.innerHTML = '<p class="error">Error looking up locations! Try reloading.<br/>Error Message: ' + data.status + '</p>';
+                        self.errorVisibility(true);
+                        self.errorMessage('Error: Geocode -  Message: ' + data.status + '</p>');
                     }
                 });
         } else {
@@ -301,7 +391,7 @@ var ViewModel = function() {
                 iconImage = "image/smallstar.png";
             }
             walkOfFameListItem.marker.setIcon(iconImage);
-            walkOfFameListItem.marker.setMap(map);
+            walkOfFameListItem.marker.setVisible(true);
         }
     };
 
@@ -359,7 +449,6 @@ var ViewModel = function() {
 
         //error handler for  Wikip star link search
         var wikiInfoLinkRequestTimeout = setTimeout(function() {
-            console.log("timeout");
             var windowContent = '<div class="infoWindow"><p>' + fullName + '</p>' +
                 '<p>' + address + '</p>' +
                 //error message
@@ -461,7 +550,11 @@ var ViewModel = function() {
             });
         }
     };
+    //function call that starts the app by requesting list data via wikipeida
+    self.dataRequest();
+};
 
-    //Launch query on "CC" to demo the app at first load.
-    self.query("Charlie Chaplin");
+//Initial callback from google map API, starts the viewModel
+var initMap = function() {
+    ko.applyBindings(new ViewModel());
 };
